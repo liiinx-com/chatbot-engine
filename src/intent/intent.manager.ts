@@ -14,7 +14,7 @@ export class IntentManager {
 
   constructor(
     private readonly userService: UserService,
-    @InjectQueue('11557*intent') private intentQueue: Queue,
+    @InjectQueue('intent*11557') private intentQueue: Queue,
   ) {}
 
   private async getUserActiveStepInfo(userId: number) {
@@ -91,7 +91,7 @@ export class IntentManager {
       const userActiveStepInfo = await this.getUserActiveStepInfo(userId);
       const { activeStepId: userActiveStepId, isNewUser } = userActiveStepInfo;
       if (isNewUser) inputConsumed = true;
-      console.log('---', userActiveStepId);
+      this.logger.log(`[i] activeStepId = ${userActiveStepId}`);
 
       // 2. Get Handler Module
       const [, handlerModule] = await this.getIntentAndHandlerByStepId(
@@ -160,9 +160,10 @@ export class IntentManager {
         );
 
         // Add to queue
-        await this.intentQueue.add('complete', {
-          shilang: 'khadang',
+        const job = await this.intentQueue.add('complete', {
+          shilang: { output: userCurrentOutput, message },
         });
+        this.logger.log(`[i] job id ${job.id} registerd on queue`);
 
         gotoNextStepId = gotoStepId //! Decide what to do next
           ? gotoStepId

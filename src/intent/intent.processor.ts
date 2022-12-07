@@ -1,11 +1,14 @@
-import { Processor, Process } from '@nestjs/bull';
 import { Job } from 'bull';
+import { Logger } from '@nestjs/common';
+import { Processor, Process } from '@nestjs/bull';
 
-@Processor('11557*intent')
+@Processor('intent*11557')
 export class IntentConsumer {
-  @Process()
+  private logger = new Logger(IntentConsumer.name);
+
+  @Process('complete')
   async process(job: Job<any>) {
-    console.log('nnnnnnnn=>', JSON.stringify(job.data, null, 1));
+    this.logger.log('2nnnnnnnn=>', JSON.stringify(job.data, null, 1));
     return {};
   }
 }

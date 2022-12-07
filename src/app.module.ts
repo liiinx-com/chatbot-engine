@@ -18,12 +18,17 @@ import { ConfigModule as ConfigurationModule } from '@nestjs/config';
     UserModule,
     BullModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        redis: {
-          host: configService.getRedisConfig().url,
-          port: 17827,
-        },
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const { host, username, password } = configService.getRedisConfig();
+        return {
+          redis: {
+            host,
+            // username,
+            password,
+            port: 17827,
+          },
+        };
+      },
       inject: [ConfigService],
     }),
   ],

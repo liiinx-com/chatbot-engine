@@ -13,9 +13,9 @@ import { ChatbotController } from './chatbot.controller';
     HttpModule,
     IntentModule,
     UserModule,
-    BullModule.registerQueue({
-      name: 'intent*11557',
-    }),
+    // BullModule.registerQueue({
+    //   name: 'intent*11557',
+    // }),
   ],
   controllers: [ChatbotController],
   providers: [ChatbotService],
