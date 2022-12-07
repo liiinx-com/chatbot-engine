@@ -33,7 +33,7 @@ export class ChatbotController {
     throw new HttpException('INVALID_VERIFY_TOKEN', 403);
   }
 
-  @Post('webhook:tenant-id')
+  @Post('webhook')
   async post(@Param('tenant-id') tenantId: string, @Req() req: Request) {
     const body: any = req.body;
 

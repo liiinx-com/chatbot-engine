@@ -1,15 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Queue } from 'bull';
+import { InjectQueue } from '@nestjs/bull';
+import { Injectable, Logger } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import intentHandlers from './intent-handlers/index';
 import { ERRORS, IncomingMessage } from './intent.types';
 
 @Injectable()
 export class IntentManager {
-  constructor(private readonly userService: UserService) {}
-
+  private logger = new Logger(IntentManager.name);
   private STEP_ID_DELIMITER = '.';
   private NEW_LINE = '\n';
   private intentsMap = new Map();
+
+  constructor(
+    private readonly userService: UserService,
+    @InjectQueue('intent*11557') private intentQueue: Queue,
+  ) {}
 
   private async getUserActiveStepInfo(userId: number) {
     // TODO: get from db and if not existed in db then return fallback";
@@ -40,7 +46,7 @@ export class IntentManager {
         value: intentsObject[key],
       }))
       .forEach(({ key, value }) => this.intentsMap.set(key, value));
-    console.log(`[i] ${this.intentsMap.size} intents loaded successfully `);
+    this.logger.log(`[i] ${this.intentsMap.size} intents loaded successfully `);
   }
 
   async updateUserActiveStepId(
@@ -85,7 +91,7 @@ export class IntentManager {
       const userActiveStepInfo = await this.getUserActiveStepInfo(userId);
       const { activeStepId: userActiveStepId, isNewUser } = userActiveStepInfo;
       if (isNewUser) inputConsumed = true;
-      console.log('---', userActiveStepId);
+      this.logger.log(`[i] activeStepId = ${userActiveStepId}`);
 
       // 2. Get Handler Module
       const [, handlerModule] = await this.getIntentAndHandlerByStepId(
@@ -116,10 +122,7 @@ export class IntentManager {
       if (requiresUserResponse) {
         if (inputConsumed) {
           result.push(currentStepResponse);
-          console.log('1', result);
           return result;
-
-          // return [...result, currentStepResponse];
         } else {
           const { response: validatedResponse, ok: validationOk } =
             await this.validateInputForStep(
@@ -130,7 +133,6 @@ export class IntentManager {
               validateFn,
             );
 
-          console.log('2');
           if (!validationOk) return [...result, currentStepResponse];
           // 3. Update user output for the current active step
           await this.updateUserActiveStepId(userId, {
@@ -139,7 +141,6 @@ export class IntentManager {
         }
       } else {
         result.push(currentStepResponse);
-        console.log('3');
       }
 
       // 4. Check if intent is complete
@@ -157,6 +158,13 @@ export class IntentManager {
           userCurrentOutput,
           { message },
         );
+
+        // Add to queue
+        const job = await this.intentQueue.add('complete', {
+          shilang: { output: userCurrentOutput, message },
+        });
+        this.logger.log(`[i] job id ${job.id} registerd on queue`);
+
         gotoNextStepId = gotoStepId //! Decide what to do next
           ? gotoStepId
           : await this.getFallbackIntentForUser(userId);

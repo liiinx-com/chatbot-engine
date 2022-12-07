@@ -1,35 +1,39 @@
 import { WhatsappIncomingMessage } from './chatbot.types';
+import { getInteractiveMsgFrom } from '../whatsapp.utils';
 
 export class ChatBotUtils {
+  private static getInteractiveTextMessageFrom({ to, text }) {
+    // return getInteractiveMsgFrom({
+    //   to,
+    //   bodyText: text,
+    //   footerText: 'footer is here',
+    // });
+  }
+
+  private static getSimpleTextMessageFrom({ to, text, previewUrl = false }) {
+    return {
+      type: 'text',
+      to,
+      text: {
+        body: text,
+        preview_url: previewUrl,
+      },
+    };
+  }
+
   static getTextMessageFrom({
     to,
     text,
     replyingMessageId = null,
     previewUrl = false,
-    // interactiveMessage = true,
   }): any {
-    // if (interactiveMessage)
-    //   return {
-    //     to,
-    //     type: "interactive",
-    //     interactive: listInteractiveObject,
-    //   };
+    const params = { to, text, previewUrl };
+    const result = ChatBotUtils.getSimpleTextMessageFrom(params);
+    // const result = ChatBotUtils.getInteractiveTextMessageFrom(params);
 
-    const result: any = {
-      type: 'text',
-      to,
-      text: {
-        body: text,
-        footer: 'test footer',
-        header: {
-          type: 'text',
-          text: 'header-content',
-        },
-        preview_url: previewUrl,
-      },
-    };
     if (replyingMessageId && false)
-      result.context = { message_id: replyingMessageId };
+      // TODO: replyingMessageId
+      return { ...result, context: { message_id: replyingMessageId } };
     return result;
   }
 

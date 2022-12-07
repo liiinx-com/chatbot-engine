@@ -1,26 +1,27 @@
-import emoji from "node-emoji";
+import emoji from 'node-emoji';
 
 const getStep1 = ({ name }) => ({
   previousStepId: null,
-  id: "hi.1",
+  id: 'hi.1',
   nextStepId: null,
   text:
-    `Hi ${name}! ${emoji.get("wave")}` +
-    "\n" +
+    // `Hi ${name}! ${emoji.get('wave')}` +
+    `Hi ${name}!` +
+    '\n' +
     "Welcome to Liiinx's WhatsApp self-service experience.",
-  key: "selectedOption",
+  key: 'selectedOption',
   options: [],
 });
 
 const stepsObject = {
-  "hi.1": getStep1,
+  'hi.1': getStep1,
 };
 
 const getStepFn = async (stepId: string) => {
   return stepsObject[stepId];
 };
 
-const getOptionsForStep = async (stepId: string, options) => {
+const getOptionsForStep = async (stepId: string, options: any) => {
   const targetStep = stepsObject[stepId](options);
   if (targetStep) {
     return targetStep.options;
@@ -72,8 +73,8 @@ const handleIntentComplete = async (
   payload: any | undefined,
 ) => {
   const result = { gotoStepId: null };
-  console.log(userId, "completed intent with", payload);
-  return { ...result, gotoStepId: "invitationCheck.1" };
+  console.log(userId, 'completed intent with', payload);
+  return { ...result, gotoStepId: 'invitationCheck.1' };
 };
 
 export default {

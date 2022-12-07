@@ -1,5 +1,7 @@
 export class RedisConfig {
-  url: string;
+  host: string;
+  username: string;
+  password: string;
 }
 
 export class WhatsappConfig {
