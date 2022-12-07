@@ -3,8 +3,8 @@ import { Logger } from '@nestjs/common';
 import { Processor, Process } from '@nestjs/bull';
 
 @Processor('intent*11557')
-export class IntentConsumer {
-  private logger = new Logger(IntentConsumer.name);
+export class IntentProcessor {
+  private logger = new Logger(IntentProcessor.name);
 
   @Process('complete')
   async process(job: Job<any>) {
