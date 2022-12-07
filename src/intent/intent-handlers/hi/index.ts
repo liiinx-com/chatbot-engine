@@ -5,7 +5,8 @@ const getStep1 = ({ name }) => ({
   id: 'hi.1',
   nextStepId: null,
   text:
-    `Hi ${name}! ${emoji.get('wave')}` +
+    // `Hi ${name}! ${emoji.get('wave')}` +
+    `Hi ${name}!` +
     '\n' +
     "Welcome to Liiinx's WhatsApp self-service experience.",
   key: 'selectedOption',

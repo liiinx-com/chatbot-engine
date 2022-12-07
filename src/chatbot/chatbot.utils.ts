@@ -20,11 +20,6 @@ export class ChatBotUtils {
       to,
       text: {
         body: text,
-        footer: 'test footer',
-        header: {
-          type: 'text',
-          text: 'header-content',
-        },
         preview_url: previewUrl,
       },
     };
