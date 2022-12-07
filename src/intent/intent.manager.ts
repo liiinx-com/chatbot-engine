@@ -1,3 +1,5 @@
+import { Queue } from 'bull';
+import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import intentHandlers from './intent-handlers/index';
@@ -10,7 +12,10 @@ export class IntentManager {
   private NEW_LINE = '\n';
   private intentsMap = new Map();
 
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    @InjectQueue('11557*intent') private intentQueue: Queue,
+  ) {}
 
   private async getUserActiveStepInfo(userId: number) {
     // TODO: get from db and if not existed in db then return fallback";
@@ -117,10 +122,7 @@ export class IntentManager {
       if (requiresUserResponse) {
         if (inputConsumed) {
           result.push(currentStepResponse);
-          console.log('1', result);
           return result;
-
-          // return [...result, currentStepResponse];
         } else {
           const { response: validatedResponse, ok: validationOk } =
             await this.validateInputForStep(
@@ -131,7 +133,6 @@ export class IntentManager {
               validateFn,
             );
 
-          console.log('2');
           if (!validationOk) return [...result, currentStepResponse];
           // 3. Update user output for the current active step
           await this.updateUserActiveStepId(userId, {
@@ -140,7 +141,6 @@ export class IntentManager {
         }
       } else {
         result.push(currentStepResponse);
-        console.log('3');
       }
 
       // 4. Check if intent is complete
@@ -158,6 +158,12 @@ export class IntentManager {
           userCurrentOutput,
           { message },
         );
+
+        // Add to queue
+        await this.intentQueue.add('complete', {
+          shilang: 'khadang',
+        });
+
         gotoNextStepId = gotoStepId //! Decide what to do next
           ? gotoStepId
           : await this.getFallbackIntentForUser(userId);
