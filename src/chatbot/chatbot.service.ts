@@ -20,7 +20,7 @@ export class ChatbotService {
     private readonly userService: UserService,
     private readonly intentManager: IntentManager,
   ) {
-    this.intentManager.loadIntents({ intentsObject });
+    this.intentManager.loadIntents({ intentsObject: intentsObject.intents });
   }
 
   async handleMessage(receivedMessage: WhatsappIncomingMessage) {

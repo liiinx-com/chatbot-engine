@@ -1,15 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import intentHandlers from './intent-handlers/index';
 import { ERRORS, IncomingMessage } from './intent.types';
 
 @Injectable()
 export class IntentManager {
-  constructor(private readonly userService: UserService) {}
-
+  private logger = new Logger(IntentManager.name);
   private STEP_ID_DELIMITER = '.';
   private NEW_LINE = '\n';
   private intentsMap = new Map();
+
+  constructor(private readonly userService: UserService) {}
 
   private async getUserActiveStepInfo(userId: number) {
     // TODO: get from db and if not existed in db then return fallback";
@@ -40,7 +41,7 @@ export class IntentManager {
         value: intentsObject[key],
       }))
       .forEach(({ key, value }) => this.intentsMap.set(key, value));
-    console.log(`[i] ${this.intentsMap.size} intents loaded successfully `);
+    this.logger.log(`[i] ${this.intentsMap.size} intents loaded successfully `);
   }
 
   async updateUserActiveStepId(
