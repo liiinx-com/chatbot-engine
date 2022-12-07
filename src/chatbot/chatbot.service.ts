@@ -7,6 +7,8 @@ import { WhatsappIncomingMessage, WhatsappResponse } from './chatbot.types';
 import { IntentManager } from 'src/intent/intent.manager';
 import { UserService } from 'src/user/user.service';
 
+import intentsObject from './intents';
+
 @Injectable()
 export class ChatbotService {
   private static baseUrl = 'https://graph.facebook.com/v15.0/';
@@ -17,7 +19,9 @@ export class ChatbotService {
     private readonly http: HttpService,
     private readonly userService: UserService,
     private readonly intentManager: IntentManager,
-  ) {}
+  ) {
+    this.intentManager.loadIntents({ intentsObject });
+  }
 
   async handleMessage(receivedMessage: WhatsappIncomingMessage) {
     const {

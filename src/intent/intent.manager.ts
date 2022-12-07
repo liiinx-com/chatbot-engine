@@ -33,7 +33,7 @@ export class IntentManager {
     user.output = {};
   }
 
-  loadAssets({ intentsObject }) {
+  async loadIntents({ intentsObject }) {
     Object.keys(intentsObject)
       .map((key) => ({
         key,

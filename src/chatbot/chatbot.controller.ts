@@ -11,10 +11,14 @@ import {
 import { Request } from 'express';
 import { ChatBotUtils } from './chatbot.utils';
 import { ConfigService } from 'src/config/config.service';
+import { ChatbotService } from './chatbot.service';
 
 @Controller('chatbot')
 export class ChatbotController {
-  constructor(private readonly config: ConfigService) {}
+  constructor(
+    private readonly config: ConfigService,
+    private readonly chatbotService: ChatbotService,
+  ) {}
 
   @Get('webhook')
   get(
@@ -41,9 +45,9 @@ export class ChatbotController {
     //   return "INVALID_WEBHOOK";
 
     const messages = ChatBotUtils.getMessagesFromWebhook(body);
-    // await Promise.all(
-    //   messages.map((msg) => this.botService.handleMessage(msg)),
-    // );
+    await Promise.all(
+      messages.map((msg) => this.chatbotService.handleMessage(msg)),
+    );
 
     return 'OK';
     // console.log("==>", response);
