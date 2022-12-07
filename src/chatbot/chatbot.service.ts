@@ -78,7 +78,7 @@ export class ChatbotService {
       ChatBotUtils.getTextMessageFrom({
         text: r.response,
         to: receivedMessage.customer.phoneNumber,
-        // replyingMessageId: receivedMessage.message.id, //TODO: replying to message
+        replyingMessageId: receivedMessage.message.id,
       }),
     );
   }

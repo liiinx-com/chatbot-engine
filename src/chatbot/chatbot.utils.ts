@@ -1,21 +1,17 @@
 import { WhatsappIncomingMessage } from './chatbot.types';
+import { getInteractiveMsgFrom } from '../whatsapp.utils';
 
 export class ChatBotUtils {
-  static getTextMessageFrom({
-    to,
-    text,
-    replyingMessageId = null,
-    previewUrl = false,
-    // interactiveMessage = true,
-  }): any {
-    // if (interactiveMessage)
-    //   return {
-    //     to,
-    //     type: "interactive",
-    //     interactive: listInteractiveObject,
-    //   };
+  private static getInteractiveTextMessageFrom({ to, text }) {
+    // return getInteractiveMsgFrom({
+    //   to,
+    //   bodyText: text,
+    //   footerText: 'footer is here',
+    // });
+  }
 
-    const result: any = {
+  private static getSimpleTextMessageFrom({ to, text, previewUrl = false }) {
+    return {
       type: 'text',
       to,
       text: {
@@ -23,8 +19,21 @@ export class ChatBotUtils {
         preview_url: previewUrl,
       },
     };
+  }
+
+  static getTextMessageFrom({
+    to,
+    text,
+    replyingMessageId = null,
+    previewUrl = false,
+  }): any {
+    const params = { to, text, previewUrl };
+    const result = ChatBotUtils.getSimpleTextMessageFrom(params);
+    // const result = ChatBotUtils.getInteractiveTextMessageFrom(params);
+
     if (replyingMessageId && false)
-      result.context = { message_id: replyingMessageId };
+      // TODO: replyingMessageId
+      return { ...result, context: { message_id: replyingMessageId } };
     return result;
   }
 
