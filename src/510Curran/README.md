@@ -1,6 +1,6 @@
 ### 510 Curran Pl
 
-1.	Building Info
+1. Building Info
     1. Management Message
     2. Building Address
     3. Residents FAQ (Handbook) -> liiinx.com/510-curran-place
@@ -9,7 +9,7 @@
     1. Management Contact Info
     2. Concierge Contact Info
     0. Back
-3. Services
+3. Services (Residents Only)
     1. ss
     0. Back
 4. Amenities
