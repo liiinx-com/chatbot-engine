@@ -1,46 +1,46 @@
 // import emoji from "node-emoji";
-import { getStepFn, getOptionsForStep } from "../utils";
+import { getStepFn, getOptionsForStep } from '../utils';
 
 const getStep1 = ({ name }) => ({
   previousStepId: null,
-  id: "mainMenu.1",
+  id: 'mainMenu.1',
   nextStepId: null,
   text: `How can I help you today, ${name}?`,
-  key: "selectedOption",
+  key: 'selectedOption',
   options: [
     {
-      id: "mainMenu*1*1",
+      id: 'mainMenu*1*1',
       order: 1,
-      label: "How it works",
-      value: "how_it_works",
-      numericValue: "1",
+      label: 'How it works',
+      value: 'how_it_works',
+      numericValue: '1',
     },
     {
-      id: "mainMenu*1*2",
+      id: 'mainMenu*1*2',
       order: 1,
-      label: "New Amazon/Walmart Return Pickup",
-      value: "new_return_order",
-      numericValue: "2",
+      label: 'New Amazon/Walmart Return Pickup',
+      value: 'new_return_order',
+      numericValue: '2',
     },
     {
-      id: "mainMenu*1*3",
+      id: 'mainMenu*1*3',
       order: 3,
-      label: "My incoming pickups",
-      value: "my_pickups",
-      numericValue: "3",
+      label: 'My incoming pickups',
+      value: 'my_pickups',
+      numericValue: '3',
     },
     {
-      id: "mainMenu*1*4",
+      id: 'mainMenu*1*4',
       order: 4,
-      label: "Pricing",
-      value: "pricing",
-      numericValue: "4",
+      label: 'Pricing',
+      value: 'pricing',
+      numericValue: '4',
     },
   ],
 });
 
 const stepsObject = {
-  "mainMenu.1": getStep1,
+  'mainMenu.1': getStep1,
 };
 
 const validate = async (
@@ -50,7 +50,7 @@ const validate = async (
 ) => {
   const result = { ok: false };
 
-  if (value === "3302code") return { ...result, ok: true };
+  if (value === '3302code') return { ...result, ok: true };
 
   return result;
 };
@@ -92,9 +92,9 @@ const handleIntentComplete = async (
 ) => {
   const result = { gotoStepId: null };
 
-  console.log(userId, "completed intent with", payload);
+  console.log(userId, 'completed intent with', payload);
 
-  return { ...result, gotoStepId: "newReturnOrder.1" };
+  return { ...result, gotoStepId: 'newReturnOrder.1' };
 };
 
 export default {
