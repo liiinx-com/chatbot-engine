@@ -15,6 +15,10 @@ const intents = {
     firstStepId: 'newReturnOrder.1',
     handlerModule: 'newReturnOrder',
   },
+  curran: {
+    firstStepId: 'curran.1',
+    handlerModule: 'curran',
+  },
 };
 
 export default {
