@@ -24,7 +24,7 @@ export default {
 const chatbot = {
   id: 1,
   code: 'curran-150',
-  title: '',
+  title: 'title',
   description: '',
   mainStepCode: 'mainMenu.1',
   status: 'ACTIVE',

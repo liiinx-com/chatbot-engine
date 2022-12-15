@@ -2,7 +2,6 @@ import {
   Controller,
   NotFoundException,
   Req,
-  Param,
   Post,
   Get,
   Query,
@@ -34,12 +33,12 @@ export class ChatbotController {
   }
 
   @Post('webhook')
-  async post(@Param('tenant-id') tenantId: string, @Req() req: Request) {
+  async post(@Query('tenant-id') tenantId: string, @Req() req: Request) {
     const body: any = req.body;
 
     // TODO: apply tenant-id
 
-    console.log('-----', tenantId);
+    console.log('-----:', tenantId);
 
     if (!body.object) throw new NotFoundException();
     if (body.object !== 'whatsapp_business_account') return 'NOT_SUPPORTED';
