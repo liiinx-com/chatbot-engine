@@ -39,6 +39,8 @@ export class ChatbotController {
 
     // TODO: apply tenant-id
 
+    console.log('-----', tenantId);
+
     if (!body.object) throw new NotFoundException();
     if (body.object !== 'whatsapp_business_account') return 'NOT_SUPPORTED';
     // if (!this.validator.validateIncomingWebhook(body).ok)
