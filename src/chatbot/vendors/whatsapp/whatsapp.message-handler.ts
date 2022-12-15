@@ -1,18 +1,15 @@
-import { WhatsappUtils } from './vendors/whatsapp/whatsapp.utils';
+import { WhatsappUtils } from './whatsapp.utils';
 import { Injectable, Logger } from '@nestjs/common';
-import {
-  WhatsappIncomingMessage,
-  WhatsappResponse,
-} from './vendors/whatsapp/whatapp.types';
+import { WhatsappIncomingMessage, WhatsappResponse } from './whatapp.types';
 import { IntentManager } from 'src/intent/intent.manager';
 import { UserService } from 'src/user/user.service';
 
-import intentsObject from './intents';
-import { WhatsappService } from './vendors/whatsapp/whatsapp.service';
+import intentsObject from '../../intents';
+import { WhatsappService } from './whatsapp.service';
 
 @Injectable()
-export class ChatbotMessageHandler {
-  private readonly logger = new Logger(ChatbotMessageHandler.name);
+export class WhatsappMessageHandler {
+  private readonly logger = new Logger(WhatsappMessageHandler.name);
 
   constructor(
     private readonly userService: UserService,

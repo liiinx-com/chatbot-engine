@@ -7,7 +7,7 @@ import { ChatbotService } from './chatbot.service';
 import { ConfigModule } from '../config/config.module';
 import { IntentModule } from 'src/intent/intent.module';
 import { ChatbotController } from './chatbot.controller';
-import { ChatbotMessageHandler } from './chatbot.message-handler';
+import { WhatsappMessageHandler } from './vendors/whatsapp/whatsapp.message-handler';
 
 @Module({
   imports: [
@@ -20,6 +20,6 @@ import { ChatbotMessageHandler } from './chatbot.message-handler';
     // }),
   ],
   controllers: [ChatbotController],
-  providers: [ChatbotService, WhatsappService, ChatbotMessageHandler],
+  providers: [ChatbotService, WhatsappService, WhatsappMessageHandler],
 })
 export class ChatbotModule {}

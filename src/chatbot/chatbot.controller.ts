@@ -11,13 +11,13 @@ import {
 import { Request } from 'express';
 import { WhatsappUtils } from './vendors/whatsapp/whatsapp.utils';
 import { ConfigService } from 'src/config/config.service';
-import { ChatbotMessageHandler } from './chatbot.message-handler';
+import { WhatsappMessageHandler } from './vendors/whatsapp/whatsapp.message-handler';
 
 @Controller('chatbot')
 export class ChatbotController {
   constructor(
     private readonly config: ConfigService,
-    private readonly chatbotService: ChatbotMessageHandler,
+    private readonly whatsappMessageHandler: WhatsappMessageHandler,
   ) {}
 
   @Get('webhook')
@@ -46,7 +46,7 @@ export class ChatbotController {
 
     const messages = WhatsappUtils.getMessagesFromWebhook(body);
     await Promise.all(
-      messages.map((msg) => this.chatbotService.handleMessage(msg)),
+      messages.map((msg) => this.whatsappMessageHandler.handleMessage(msg)),
     );
 
     return 'OK';
