@@ -102,7 +102,7 @@ export class IntentManager {
         validate: validateFn,
         getNextStepFor,
         handleIntentComplete,
-        requiresUserResponse,
+        requiresUserResponse, // TODO: candidate to remove. when validateFn is available means it requires-user-response
       } = handlerModule;
 
       // 3. Get Step Text and Options for the Current Step

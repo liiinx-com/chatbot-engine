@@ -4,6 +4,7 @@ import { IntentManager } from './intent.manager';
 import { UserModule } from 'src/user/user.module';
 import { IntentProcessor } from './intent.processor';
 import { ConfigModule } from 'src/config/config.module';
+import { IntentService } from './intent.service';
 
 @Module({
   imports: [
@@ -13,7 +14,7 @@ import { ConfigModule } from 'src/config/config.module';
       name: 'intent*11557',
     }),
   ],
-  providers: [IntentManager, IntentProcessor],
+  providers: [IntentManager, IntentProcessor, IntentService],
   exports: [IntentManager],
 })
 export class IntentModule {}
