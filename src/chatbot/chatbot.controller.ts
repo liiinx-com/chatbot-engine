@@ -9,15 +9,15 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { ChatBotUtils } from './chatbot.utils';
+import { WhatsappUtils } from './vendors/whatsapp/whatsapp.utils';
 import { ConfigService } from 'src/config/config.service';
-import { ChatbotService } from './chatbot.service';
+import { ChatbotMessageHandler } from './chatbot.message-handler';
 
 @Controller('chatbot')
 export class ChatbotController {
   constructor(
     private readonly config: ConfigService,
-    private readonly chatbotService: ChatbotService,
+    private readonly chatbotService: ChatbotMessageHandler,
   ) {}
 
   @Get('webhook')
@@ -44,7 +44,7 @@ export class ChatbotController {
     // if (!this.validator.validateIncomingWebhook(body).ok)
     //   return "INVALID_WEBHOOK";
 
-    const messages = ChatBotUtils.getMessagesFromWebhook(body);
+    const messages = WhatsappUtils.getMessagesFromWebhook(body);
     await Promise.all(
       messages.map((msg) => this.chatbotService.handleMessage(msg)),
     );
