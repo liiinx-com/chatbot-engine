@@ -20,12 +20,3 @@ const intents = {
 export default {
   intents,
 };
-
-const chatbot = {
-  id: 1,
-  code: 'curran-150',
-  title: '',
-  description: '',
-  mainStepCode: 'mainMenu.1',
-  status: 'ACTIVE',
-};

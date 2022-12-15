@@ -12,12 +12,14 @@ import { Request } from 'express';
 import { WhatsappUtils } from './vendors/whatsapp/whatsapp.utils';
 import { ConfigService } from 'src/config/config.service';
 import { WhatsappMessageHandler } from './vendors/whatsapp/whatsapp.message-handler';
+import { ChatbotService } from './chatbot.service';
 
 @Controller('chatbot')
 export class ChatbotController {
   constructor(
     private readonly config: ConfigService,
     private readonly whatsappMessageHandler: WhatsappMessageHandler,
+    private readonly botService: ChatbotService,
   ) {}
 
   @Get('webhook')
@@ -34,12 +36,14 @@ export class ChatbotController {
   }
 
   @Post('webhook')
-  async post(@Param('tenant-id') tenantId: string, @Req() req: Request) {
+  async post(@Param('code') chatbotCode: string, @Req() req: Request) {
     const body: any = req.body;
 
-    // TODO: apply tenant-id
-
-    console.log('-----', tenantId);
+    const chatbot = await this.botService.getChatbotByCode(chatbotCode);
+    if (!chatbot) {
+      // TODO: do something when chatbotCode is not valid or bot is disabled
+      return 'OK';
+    }
 
     if (!body.object) throw new NotFoundException();
     if (body.object !== 'whatsapp_business_account') return 'NOT_SUPPORTED';
