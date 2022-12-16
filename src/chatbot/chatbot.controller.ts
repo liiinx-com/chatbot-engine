@@ -52,7 +52,9 @@ export class ChatbotController {
 
     const messages = WhatsappUtils.getMessagesFromWebhook(body);
     await Promise.all(
-      messages.map((msg) => this.whatsappMessageHandler.handleMessage(msg)),
+      messages.map((msg) =>
+        this.whatsappMessageHandler.handleMessage(chatbot.id, msg),
+      ),
     );
 
     return 'OK';

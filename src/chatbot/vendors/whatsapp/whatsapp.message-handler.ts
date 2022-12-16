@@ -15,11 +15,12 @@ export class WhatsappMessageHandler {
     private readonly userService: UserService,
     private readonly intentManager: IntentManager,
     private readonly whatsappService: WhatsappService,
-  ) {
-    this.intentManager.loadIntents({ intentsObject: intentsObject.intents });
-  }
+  ) {}
 
-  async handleMessage(receivedMessage: WhatsappIncomingMessage) {
+  async handleMessage(
+    chatbotId: string,
+    receivedMessage: WhatsappIncomingMessage,
+  ) {
     const {
       customer: { phoneNumber },
       business: { phoneNumberId },
@@ -30,7 +31,11 @@ export class WhatsappMessageHandler {
 
     let responses: any[];
     if (type === 'text')
-      responses = await this.textMessageHandler(userId, receivedMessage);
+      responses = await this.textMessageHandler(
+        chatbotId,
+        userId,
+        receivedMessage,
+      );
     // console.log("via", responses);
 
     if (responses) {
@@ -49,6 +54,7 @@ export class WhatsappMessageHandler {
   }
 
   async textMessageHandler(
+    chatbotId: string,
     userId: number,
     receivedMessage: WhatsappIncomingMessage,
   ): Promise<any> {
@@ -63,6 +69,7 @@ export class WhatsappMessageHandler {
     } = receivedMessage;
 
     const responses = await this.intentManager.processTextMessageForUser(
+      chatbotId,
       userId,
       {
         user: { id: userId, name: profile.name },

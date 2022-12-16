@@ -79,7 +79,6 @@ export class IntentManager {
   }
 
   async processTextMessageForUser(
-    chatbotId: string,
     userId: number,
     message: IncomingMessage,
   ): Promise<any> {
