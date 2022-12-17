@@ -3,7 +3,6 @@ import {
   NotFoundException,
   Req,
   Post,
-  Param,
   Get,
   Query,
   HttpException,
@@ -36,7 +35,7 @@ export class ChatbotController {
   }
 
   @Post('webhook')
-  async post(@Param('code') chatbotCode: string, @Req() req: Request) {
+  async post(@Query('code') chatbotCode: string, @Req() req: Request) {
     const body: any = req.body;
 
     const chatbot = await this.botService.getChatbotByCode(chatbotCode);

@@ -61,28 +61,22 @@ export class IntentManager {
   }
 
   private async getFallbackIntentForUser(userId: number) {
-    return 'hi.1';
+    return '2990a05d-5026-47c1-97dc-00c7f4210aad';
     // return "newReturnOrder.1";
   }
 
-  async getHandlerAndIntentAndStepByStepId(stepId: string) {
+  async getHandlerAndIntentAndStepByStepId(stepId: string): Promise<any> {
     if (!stepId) throw new Error(ERRORS.STEP_NOT_FOUND);
 
     const currentStep = steps.find((step) => step.id === stepId);
+
     const currentIntent = intents.find(
       (intent) => intent.id === currentStep.intentId,
     );
 
-    console.log('currentStep', currentStep);
-    console.log('currentIntent', currentIntent);
-
-    const [intentKey] = stepId.split(this.STEP_ID_DELIMITER);
-
-    if (this.intentsMap.has(intentKey)) {
-      const intent = this.intentsMap.get(intentKey);
-
-      const handler = intentHandlers[intentKey];
-      return [handler, intent, 'step'];
+    if (currentStep && currentIntent) {
+      const handler = intentHandlers[currentIntent.handlerModule];
+      return [handler, currentIntent, currentStep];
     }
     throw new Error(ERRORS.STEP_NOT_FOUND);
   }
@@ -106,6 +100,7 @@ export class IntentManager {
       // 2. Get Handler Module, Intent and Step
       const [handlerModule, intent, currentStep] =
         await this.getHandlerAndIntentAndStepByStepId(userActiveStepId); //TODO: implement------------------------
+      console.log('mmmmm', handlerModule);
       const {
         getStepTextAndOptionsByStepId,
         validate: validateFn,
