@@ -79,7 +79,10 @@ const handleIntentComplete = async (
 ) => {
   const result = { gotoStepId: null };
   console.log(userId, 'completed intent ' + intent.title + ' with', payload);
-  return { ...result, gotoStepId: 'invitationCheck.1' };
+  if (intent.whenCompleteGotoStepId) {
+    result.gotoStepId = intent.whenCompleteGotoStepId;
+  }
+  return result;
 };
 
 export default {

@@ -15,13 +15,14 @@ export class ChatBotIntent {
 
   id: string;
   botId: string;
+  starterStepId: string;
   title: string;
   type: 'intent' | 'menu';
 
   handlerModule: 'simpleIntentHandler';
 
   // one of these two should be set
-  whenCompleteGotoIntentId?: string;
+  whenCompleteGotoStepId?: string;
   WhenCompleteCallbackUrl?: string;
 
   // onCompleteMessageId: '', // TODO: 0.1.x

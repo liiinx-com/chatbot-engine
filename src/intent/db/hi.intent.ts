@@ -1,5 +1,5 @@
 import { ChatBotIntent, ChatBotStep } from '../../chatbot/chatbot.types';
-import { invitationCheckIntent } from './invitationCheck.intent';
+import { invitationCheckStep1 } from './invitationCheck.intent';
 
 export const hiCurranStep1: ChatBotStep = {
   id: 'hi-step1',
@@ -17,8 +17,9 @@ export const hiCurranIntent: ChatBotIntent = {
   botId: 'bot-id',
   title: 'curran-hi',
   type: 'intent',
+  starterStepId: 'hi-step1',
 
   handlerModule: 'simpleIntentHandler',
-  whenCompleteGotoIntentId: invitationCheckIntent.id,
+  whenCompleteGotoStepId: invitationCheckStep1.id,
   steps: [hiCurranStep1],
 };

@@ -61,7 +61,8 @@ export class IntentManager {
   }
 
   private async getFallbackStepIdForUser(userId: number) {
-    //TODO get from intent object
+    //TODO get bot default intent and then
+    // starterStepId for the intent
     return 'hi-step1';
     // return "newReturnOrder.1";
   }
