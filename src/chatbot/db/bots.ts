@@ -1,5 +1,6 @@
 import { ChatBot, ChatBotIntent } from '../chatbot.types';
 import { hiCurranIntent as intent1 } from './hi.intent';
+import { invitationCheckIntent as intent2 } from './invitationCheck.intent';
 
 const curranBot: ChatBot = {
   id: '5e745d21-3ec3-4693-93fe-d2ce43d2323b',
@@ -12,4 +13,4 @@ const curranBot: ChatBot = {
 };
 
 export const bots: ChatBot[] = [curranBot];
-export const intents: ChatBotIntent[] = [intent1];
+export const intents: ChatBotIntent[] = [intent1, intent2];

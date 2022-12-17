@@ -157,7 +157,6 @@ export class IntentManager {
         const { gotoStepId } = await handleIntentComplete(
           userId,
           userCurrentOutput,
-          { message },
         );
 
         // Add to queue

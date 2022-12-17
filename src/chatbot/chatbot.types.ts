@@ -18,7 +18,7 @@ export class ChatBotIntent {
   title: string;
   type: 'intent' | 'menu';
 
-  handlerModule: 'static-intent-handler';
+  handlerModule: 'simpleIntentHandler';
 
   // one of these two should be set
   whenCompleteGotoIntentId?: string;

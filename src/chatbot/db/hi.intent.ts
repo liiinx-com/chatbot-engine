@@ -17,7 +17,7 @@ export const hiCurranIntent: ChatBotIntent = {
   title: 'curran-hi',
   type: 'intent',
 
-  handlerModule: 'static-intent-handler',
+  handlerModule: 'simpleIntentHandler',
   whenCompleteGotoIntentId: invitationCheckIntent.id,
   steps: [hiCurranStep1],
 };

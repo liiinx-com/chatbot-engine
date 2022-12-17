@@ -1,4 +1,4 @@
-import { bots } from './bots';
+import { bots, intents } from './bots';
 
 export default {
   bots,
