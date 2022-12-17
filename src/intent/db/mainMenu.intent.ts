@@ -51,6 +51,7 @@ export const mainMenuIntent: ChatBotIntent = {
   botId: 'bot-id',
   title: 'curran-main-menu',
   type: 'menu',
+  starterStepId: 'main-menu-step-1',
 
   handlerModule: 'simpleIntentHandler',
   steps: [mainMenuStep1],
