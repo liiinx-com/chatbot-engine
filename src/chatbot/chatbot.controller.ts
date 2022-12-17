@@ -2,22 +2,24 @@ import {
   Controller,
   NotFoundException,
   Req,
-  Param,
   Post,
+  Param,
   Get,
   Query,
   HttpException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { ChatBotUtils } from './chatbot.utils';
+import { WhatsappUtils } from './vendors/whatsapp/whatsapp.utils';
 import { ConfigService } from 'src/config/config.service';
+import { WhatsappMessageHandler } from './vendors/whatsapp/whatsapp.message-handler';
 import { ChatbotService } from './chatbot.service';
 
 @Controller('chatbot')
 export class ChatbotController {
   constructor(
     private readonly config: ConfigService,
-    private readonly chatbotService: ChatbotService,
+    private readonly whatsappMessageHandler: WhatsappMessageHandler,
+    private readonly botService: ChatbotService,
   ) {}
 
   @Get('webhook')
@@ -34,19 +36,25 @@ export class ChatbotController {
   }
 
   @Post('webhook')
-  async post(@Param('tenant-id') tenantId: string, @Req() req: Request) {
+  async post(@Param('code') chatbotCode: string, @Req() req: Request) {
     const body: any = req.body;
 
-    // TODO: apply tenant-id
+    const chatbot = await this.botService.getChatbotByCode(chatbotCode);
+    if (!chatbot) {
+      // TODO: do something when chatbotCode is not valid or bot is disabled
+      return 'OK';
+    }
 
     if (!body.object) throw new NotFoundException();
     if (body.object !== 'whatsapp_business_account') return 'NOT_SUPPORTED';
     // if (!this.validator.validateIncomingWebhook(body).ok)
     //   return "INVALID_WEBHOOK";
 
-    const messages = ChatBotUtils.getMessagesFromWebhook(body);
+    const messages = WhatsappUtils.getMessagesFromWebhook(body);
     await Promise.all(
-      messages.map((msg) => this.chatbotService.handleMessage(msg)),
+      messages.map((msg) =>
+        this.whatsappMessageHandler.handleMessage(chatbot.id, msg),
+      ),
     );
 
     return 'OK';

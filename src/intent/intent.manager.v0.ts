@@ -4,7 +4,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import intentHandlers from './intent-handlers/index';
 import { ERRORS, IncomingMessage } from './intent.types';
-import { steps, intents } from './db/index';
 
 @Injectable()
 export class IntentManager {
@@ -65,16 +64,8 @@ export class IntentManager {
     // return "newReturnOrder.1";
   }
 
-  async getHandlerAndIntentAndStepByStepId(stepId: string) {
+  async getIntentAndHandlerByStepId(stepId: string) {
     if (!stepId) throw new Error(ERRORS.STEP_NOT_FOUND);
-
-    const currentStep = steps.find((step) => step.id === stepId);
-    const currentIntent = intents.find(
-      (intent) => intent.id === currentStep.intentId,
-    );
-
-    console.log('currentStep', currentStep);
-    console.log('currentIntent', currentIntent);
 
     const [intentKey] = stepId.split(this.STEP_ID_DELIMITER);
 
@@ -82,13 +73,12 @@ export class IntentManager {
       const intent = this.intentsMap.get(intentKey);
 
       const handler = intentHandlers[intentKey];
-      return [handler, intent, 'step'];
+      return [intent, handler];
     }
     throw new Error(ERRORS.STEP_NOT_FOUND);
   }
 
   async processTextMessageForUser(
-    chatbotId: string,
     userId: number,
     message: IncomingMessage,
   ): Promise<any> {
@@ -103,9 +93,10 @@ export class IntentManager {
       if (isNewUser) inputConsumed = true;
       this.logger.log(`[i] activeStepId = ${userActiveStepId}`);
 
-      // 2. Get Handler Module, Intent and Step
-      const [handlerModule, intent, currentStep] =
-        await this.getHandlerAndIntentAndStepByStepId(userActiveStepId); //TODO: implement------------------------
+      // 2. Get Handler Module
+      const [, handlerModule] = await this.getIntentAndHandlerByStepId(
+        userActiveStepId,
+      );
       const {
         getStepTextAndOptionsByStepId,
         validate: validateFn,
@@ -165,6 +156,7 @@ export class IntentManager {
         const { gotoStepId } = await handleIntentComplete(
           userId,
           userCurrentOutput,
+          { message },
         );
 
         // Add to queue

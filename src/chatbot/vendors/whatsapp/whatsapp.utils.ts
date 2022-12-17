@@ -1,7 +1,6 @@
-import { WhatsappIncomingMessage } from './chatbot.types';
-import { getInteractiveMsgFrom } from '../whatsapp.utils';
+import { WhatsappIncomingMessage } from './whatapp.types';
 
-export class ChatBotUtils {
+export class WhatsappUtils {
   private static getInteractiveTextMessageFrom({ to, text }) {
     // return getInteractiveMsgFrom({
     //   to,
@@ -28,7 +27,7 @@ export class ChatBotUtils {
     previewUrl = false,
   }): any {
     const params = { to, text, previewUrl };
-    const result = ChatBotUtils.getSimpleTextMessageFrom(params);
+    const result = WhatsappUtils.getSimpleTextMessageFrom(params);
     // const result = ChatBotUtils.getInteractiveTextMessageFrom(params);
 
     if (replyingMessageId && false)
