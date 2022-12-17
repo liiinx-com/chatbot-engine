@@ -35,14 +35,13 @@ const validate = async (
   value: string,
   { stepKey, stepOptions },
 ) => {
-  console.log(
-    '====validation required for ' + step.id + step.validatorUrl === '',
-  );
+  console.log('====validating for ' + step.id + step.validatorUrl === '');
   if (step.validatorUrl) {
     // TODO: call validator url to validate
     console.log(
       'validating ' + step.id + ' by calling url with payload=' + value,
       stepKey,
+      stepOptions,
     );
     return { ok: true };
   } else return { ok: true };

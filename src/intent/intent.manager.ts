@@ -108,7 +108,6 @@ export class IntentManager {
         validate: validateFn,
         getNextStepFor,
         handleIntentComplete,
-        requiresUserResponse, // TODO: candidate to remove. when validateFn is available means it requires-user-response
       } = handlerModule;
 
       // 3. Get Step Text and Options for the Current Step
@@ -139,6 +138,7 @@ export class IntentManager {
           return result;
         } else {
           const { response: validatedResponse, ok: validationOk } =
+            // TODO: use built-in options validation if stepResponseType === multiple
             await this.validateInputForStep(
               currentStepOptions,
               stepKey,
@@ -175,7 +175,7 @@ export class IntentManager {
 
         // Add to queue
         const job = await this.intentQueue.add('complete', {
-          shilang: { output: userCurrentOutput, message },
+          shillang: { output: userCurrentOutput, message },
         });
         this.logger.log(`[i] job id ${job.id} registered on queue`);
 
