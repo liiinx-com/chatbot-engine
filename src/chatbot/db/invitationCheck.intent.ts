@@ -1,8 +1,9 @@
 import { ChatBotIntent, ChatBotStep } from '../chatbot.types';
 import { mainMenuIntent } from './mainMenu.intent';
 
-const invitationCheckStep1: ChatBotStep = {
+export const invitationCheckStep1: ChatBotStep = {
   id: '328f5ed9-9dde-481d-91e1-753e8769a18b',
+  intentId: '31231936-b5ca-4c9d-b514-5c49387e21db',
   key: 'invitationCode',
   userResponseType: 'fill-in-blank',
   text:
@@ -18,7 +19,7 @@ export const invitationCheckIntent: ChatBotIntent = {
   title: 'curran_invitation_check',
   type: 'intent',
 
-  handlerModule: 'static-intent-handler',
+  handlerModule: 'simpleIntentHandler',
   whenCompleteGotoIntentId: mainMenuIntent.id,
   steps: [invitationCheckStep1],
 };

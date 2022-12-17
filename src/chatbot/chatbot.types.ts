@@ -30,6 +30,7 @@ export class ChatBotIntent {
 
 export class ChatBotStep {
   id: string;
+  intentId: string;
   previousStepId?: string;
   nextStepId?: string;
   key: string;

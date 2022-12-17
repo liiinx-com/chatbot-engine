@@ -64,7 +64,7 @@ export class IntentManager {
     // return "newReturnOrder.1";
   }
 
-  async getIntentAndHandlerByStepId(stepId: string) {
+  async getHandlerAndIntentAndStepByStepId(stepId: string) {
     if (!stepId) throw new Error(ERRORS.STEP_NOT_FOUND);
 
     const [intentKey] = stepId.split(this.STEP_ID_DELIMITER);
@@ -73,7 +73,7 @@ export class IntentManager {
       const intent = this.intentsMap.get(intentKey);
 
       const handler = intentHandlers[intentKey];
-      return [intent, handler];
+      return [handler, intent, 'step'];
     }
     throw new Error(ERRORS.STEP_NOT_FOUND);
   }
@@ -94,10 +94,9 @@ export class IntentManager {
       if (isNewUser) inputConsumed = true;
       this.logger.log(`[i] activeStepId = ${userActiveStepId}`);
 
-      // 2. Get Handler Module
-      const [, handlerModule] = await this.getIntentAndHandlerByStepId(
-        userActiveStepId,
-      );
+      // 2. Get Handler Module, Intent and Step
+      const [handlerModule, intent, step] =
+        await this.getHandlerAndIntentAndStepByStepId(userActiveStepId); //TODO: implement------------------------
       const {
         getStepTextAndOptionsByStepId,
         validate: validateFn,

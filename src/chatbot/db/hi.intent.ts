@@ -1,8 +1,9 @@
 import { ChatBotIntent, ChatBotStep } from '../chatbot.types';
 import { invitationCheckIntent } from './invitationCheck.intent';
 
-const hiCurranStep1: ChatBotStep = {
+export const hiCurranStep1: ChatBotStep = {
   id: '2990a05d-5026-47c1-97dc-00c7f4210aad',
+  intentId: 'hi-intent-id',
   key: 'selectedItem',
   userResponseType: 'no-response',
   text:

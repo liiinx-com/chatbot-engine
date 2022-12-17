@@ -31,8 +31,9 @@ const mainMenuStep1Options: StepOption[] = [
   },
 ];
 
-const mainMenuStep1: ChatBotStep = {
+export const mainMenuStep1: ChatBotStep = {
   id: '24a22f9f-ffad-4f7a-b188-6593f5cf1f9e',
+  intentId: '61d6ccbd-3143-4a96-8048-05c7208f801b',
   key: 'selectedItem',
   userResponseType: 'multiple-choice',
 
@@ -47,6 +48,6 @@ export const mainMenuIntent: ChatBotIntent = {
   title: 'curran-main-menu',
   type: 'menu',
 
-  handlerModule: 'static-intent-handler',
+  handlerModule: 'simpleIntentHandler',
   steps: [mainMenuStep1],
 };
