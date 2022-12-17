@@ -4,6 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import intentHandlers from './intent-handlers/index';
 import { ERRORS, IncomingMessage } from './intent.types';
+import { steps, intents } from './db/index';
 
 @Injectable()
 export class IntentManager {
@@ -67,6 +68,14 @@ export class IntentManager {
   async getHandlerAndIntentAndStepByStepId(stepId: string) {
     if (!stepId) throw new Error(ERRORS.STEP_NOT_FOUND);
 
+    const currentStep = steps.find((step) => step.id === stepId);
+    const currentIntent = intents.find(
+      (intent) => intent.id === currentStep.intentId,
+    );
+
+    console.log('currentStep', currentStep);
+    console.log('currentIntent', currentIntent);
+
     const [intentKey] = stepId.split(this.STEP_ID_DELIMITER);
 
     if (this.intentsMap.has(intentKey)) {
@@ -95,7 +104,7 @@ export class IntentManager {
       this.logger.log(`[i] activeStepId = ${userActiveStepId}`);
 
       // 2. Get Handler Module, Intent and Step
-      const [handlerModule, intent, step] =
+      const [handlerModule, intent, currentStep] =
         await this.getHandlerAndIntentAndStepByStepId(userActiveStepId); //TODO: implement------------------------
       const {
         getStepTextAndOptionsByStepId,

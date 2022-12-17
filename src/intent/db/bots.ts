@@ -1,4 +1,8 @@
-import { ChatBot, ChatBotIntent, ChatBotStep } from '../chatbot.types';
+import {
+  ChatBot,
+  ChatBotIntent,
+  ChatBotStep,
+} from '../../chatbot/chatbot.types';
 import { hiCurranIntent as intent1, hiCurranStep1 as step1 } from './hi.intent';
 import {
   invitationCheckIntent as intent2,

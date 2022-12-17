@@ -1,4 +1,4 @@
-import { ChatBotIntent, ChatBotStep } from '../chatbot.types';
+import { ChatBotIntent, ChatBotStep } from '../../chatbot/chatbot.types';
 import { invitationCheckIntent } from './invitationCheck.intent';
 
 export const hiCurranStep1: ChatBotStep = {

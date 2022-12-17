@@ -1,4 +1,8 @@
-import { ChatBotIntent, ChatBotStep, StepOption } from '../chatbot.types';
+import {
+  ChatBotIntent,
+  ChatBotStep,
+  StepOption,
+} from '../../chatbot/chatbot.types';
 
 const mainMenuStep1Options: StepOption[] = [
   {

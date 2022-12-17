@@ -1,4 +1,4 @@
-import { ChatBotIntent, ChatBotStep } from '../chatbot.types';
+import { ChatBotIntent, ChatBotStep } from '../../chatbot/chatbot.types';
 import { mainMenuIntent } from './mainMenu.intent';
 
 export const invitationCheckStep1: ChatBotStep = {

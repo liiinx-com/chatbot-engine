@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import db from './db/index';
+import db from '../intent/db/index';
 
 @Injectable()
 export class ChatbotService {
