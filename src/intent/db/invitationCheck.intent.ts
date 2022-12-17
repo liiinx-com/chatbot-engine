@@ -2,8 +2,8 @@ import { ChatBotIntent, ChatBotStep } from '../../chatbot/chatbot.types';
 import { mainMenuIntent } from './mainMenu.intent';
 
 export const invitationCheckStep1: ChatBotStep = {
-  id: '328f5ed9-9dde-481d-91e1-753e8769a18b',
-  intentId: '31231936-b5ca-4c9d-b514-5c49387e21db',
+  id: 'invitation-step-1',
+  intentId: 'invitation-intent-1',
   key: 'invitationCode',
   userResponseType: 'fill-in-blank',
   text:
@@ -14,8 +14,8 @@ export const invitationCheckStep1: ChatBotStep = {
 };
 
 export const invitationCheckIntent: ChatBotIntent = {
-  id: '31231936-b5ca-4c9d-b514-5c49387e21db',
-  botId: '5e745d21-3ec3-4693-93fe-d2ce43d2323b',
+  id: 'invitation-intent-1',
+  botId: 'bot-id',
   title: 'curran_invitation_check',
   type: 'intent',
 

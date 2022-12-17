@@ -46,9 +46,7 @@ const getNextStepFor = async (
   const result = { isIntentComplete: false, nextStep: null };
 
   if (step.nextStepId) {
-    const nextStepFn = await getStepFn(step.nextStepId);
-    const nextStep = nextStepFn(options);
-    return { ...result, nextStep };
+    return { ...result, nextStepId: step.nextStepId };
   }
   return { ...result, isIntentComplete: true };
 };
@@ -65,25 +63,22 @@ const getStepTextAndOptionsByStep = async (
     },
   } = options;
 
-  const params = { name };
+  let stepOptions = [];
+  const stepRequiresUserInput = step.userResponseType !== 'no-response';
+  if (step.userResponseType === 'multiple-choice') {
+    stepOptions = step.options;
+  }
 
-  console.log('s->', step);
-  console.log('i->', intent);
-
-  // const stepFn = await getStepFn(stepId);
-  // const step = stepFn(params);
-  // const stepOptions = await getOptionsForStep(stepId, params);
-  return ['step.text', 'stepOptions', 'step.key'];
+  return [step.text, stepOptions, step.key, stepRequiresUserInput];
 };
 
 const handleIntentComplete = async (
-  step: ChatBotStep,
   intent: ChatBotIntent,
   userId: number,
   payload: any | undefined,
 ) => {
   const result = { gotoStepId: null };
-  console.log(userId, 'completed intent with', payload);
+  console.log(userId, 'completed intent ' + intent.title + ' with', payload);
   return { ...result, gotoStepId: 'invitationCheck.1' };
 };
 

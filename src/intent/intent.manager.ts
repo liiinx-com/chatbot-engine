@@ -24,7 +24,7 @@ export class IntentManager {
     return user?.activeStepId
       ? { activeStepId: user.activeStepId, isNewUser: false }
       : {
-          activeStepId: await this.getFallbackIntentForUser(userId),
+          activeStepId: await this.getFallbackStepIdForUser(userId),
           isNewUser: true,
         };
   }
@@ -60,9 +60,9 @@ export class IntentManager {
     return user;
   }
 
-  private async getFallbackIntentForUser(userId: number) {
+  private async getFallbackStepIdForUser(userId: number) {
     //TODO get from intent object
-    return '2990a05d-5026-47c1-97dc-00c7f4210aad';
+    return 'hi-step1';
     // return "newReturnOrder.1";
   }
 
@@ -111,20 +111,28 @@ export class IntentManager {
       } = handlerModule;
 
       // 3. Get Step Text and Options for the Current Step
-      const [currentStepText, currentStepOptions, stepKey] =
-        await getStepTextAndOptionsByStep(userCurrentStep, userCurrentIntent, {
+      const [
+        currentStepText,
+        currentStepOptions,
+        stepKey,
+        stepRequiresUserInput,
+      ] = await getStepTextAndOptionsByStep(
+        userCurrentStep,
+        userCurrentIntent,
+        {
           message,
           isNewUser: userActiveStepInfo.isNewUser,
-        });
+        },
+      );
       const currentStepResponse = {
         response:
           currentStepText +
-          (requiresUserResponse
+          (stepRequiresUserInput
             ? '\n\n' + this.getOptionsTextFromOptions(currentStepOptions)
             : ''),
       };
 
-      if (requiresUserResponse) {
+      if (stepRequiresUserInput) {
         if (inputConsumed) {
           result.push(currentStepResponse);
           return result;
@@ -149,7 +157,7 @@ export class IntentManager {
       }
 
       // 4. Check if intent is complete
-      const { isIntentComplete, nextStep } = await getNextStepFor(
+      const { isIntentComplete, nextStepId } = await getNextStepFor(
         userActiveStepId,
         { message },
       );
@@ -159,6 +167,7 @@ export class IntentManager {
       if (isIntentComplete) {
         const userCurrentOutput = await this.getUserCurrentOutput(userId);
         const { gotoStepId } = await handleIntentComplete(
+          userCurrentIntent,
           userId,
           userCurrentOutput,
         );
@@ -167,14 +176,14 @@ export class IntentManager {
         const job = await this.intentQueue.add('complete', {
           shilang: { output: userCurrentOutput, message },
         });
-        this.logger.log(`[i] job id ${job.id} registerd on queue`);
+        this.logger.log(`[i] job id ${job.id} registered on queue`);
 
         gotoNextStepId = gotoStepId //! Decide what to do next
           ? gotoStepId
-          : await this.getFallbackIntentForUser(userId);
+          : await this.getFallbackStepIdForUser(userId);
         await this.resetUserOutput(userId);
       } else {
-        gotoNextStepId = nextStep.id;
+        gotoNextStepId = nextStepId;
       }
 
       await this.updateUserActiveStepId(userId, {
