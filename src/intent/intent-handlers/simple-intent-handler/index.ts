@@ -1,3 +1,5 @@
+import { ChatBotIntent, ChatBotStep } from 'src/chatbot/chatbot.types';
+
 const getStep1 = ({ name }) => ({
   previousStepId: null,
   id: 'hi.1',
@@ -28,17 +30,21 @@ const getOptionsForStep = async (stepId: string, options: any) => {
 };
 
 const validate = async (
-  stepId: string,
+  step: ChatBotStep,
+  // intent: ChatBotIntent,
   value: string,
   { stepKey, stepOptions },
 ) => {
   return { ok: true };
 };
 
-const getNextStepFor = async (stepId: string, options: any | undefined) => {
+const getNextStepFor = async (
+  step: ChatBotStep,
+  intent: ChatBotIntent,
+  options: any | undefined,
+) => {
   const result = { isIntentComplete: false, nextStep: null };
-  const stepFn = await getStepFn(stepId);
-  const step = stepFn(options);
+
   if (step.nextStepId) {
     const nextStepFn = await getStepFn(step.nextStepId);
     const nextStep = nextStepFn(options);
@@ -47,8 +53,9 @@ const getNextStepFor = async (stepId: string, options: any | undefined) => {
   return { ...result, isIntentComplete: true };
 };
 
-const getStepTextAndOptionsByStepId = async (
-  stepId: string,
+const getStepTextAndOptionsByStep = async (
+  step: ChatBotStep,
+  intent: ChatBotIntent,
   options: any | undefined,
 ) => {
   const {
@@ -60,13 +67,18 @@ const getStepTextAndOptionsByStepId = async (
 
   const params = { name };
 
-  const stepFn = await getStepFn(stepId);
-  const step = stepFn(params);
-  const stepOptions = await getOptionsForStep(stepId, params);
-  return [step.text, stepOptions, step.key];
+  console.log('s->', step);
+  console.log('i->', intent);
+
+  // const stepFn = await getStepFn(stepId);
+  // const step = stepFn(params);
+  // const stepOptions = await getOptionsForStep(stepId, params);
+  return ['step.text', 'stepOptions', 'step.key'];
 };
 
 const handleIntentComplete = async (
+  step: ChatBotStep,
+  intent: ChatBotIntent,
   userId: number,
   payload: any | undefined,
 ) => {
@@ -76,7 +88,7 @@ const handleIntentComplete = async (
 };
 
 export default {
-  getStepTextAndOptionsByStepId,
+  getStepTextAndOptionsByStep,
   getNextStepFor,
   handleIntentComplete,
   validate,

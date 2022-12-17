@@ -61,6 +61,7 @@ export class IntentManager {
   }
 
   private async getFallbackIntentForUser(userId: number) {
+    //TODO get from intent object
     return '2990a05d-5026-47c1-97dc-00c7f4210aad';
     // return "newReturnOrder.1";
   }
@@ -98,11 +99,11 @@ export class IntentManager {
       this.logger.log(`[i] activeStepId = ${userActiveStepId}`);
 
       // 2. Get Handler Module, Intent and Step
-      const [handlerModule, intent, currentStep] =
+      const [handlerModule, userCurrentIntent, userCurrentStep] =
         await this.getHandlerAndIntentAndStepByStepId(userActiveStepId); //TODO: implement------------------------
-      console.log('mmmmm', handlerModule);
+
       const {
-        getStepTextAndOptionsByStepId,
+        getStepTextAndOptionsByStep,
         validate: validateFn,
         getNextStepFor,
         handleIntentComplete,
@@ -111,7 +112,7 @@ export class IntentManager {
 
       // 3. Get Step Text and Options for the Current Step
       const [currentStepText, currentStepOptions, stepKey] =
-        await getStepTextAndOptionsByStepId(userActiveStepId, {
+        await getStepTextAndOptionsByStep(userCurrentStep, userCurrentIntent, {
           message,
           isNewUser: userActiveStepInfo.isNewUser,
         });
@@ -132,7 +133,7 @@ export class IntentManager {
             await this.validateInputForStep(
               currentStepOptions,
               stepKey,
-              userActiveStepId,
+              userCurrentStep,
               userInput,
               validateFn,
             );
@@ -213,7 +214,7 @@ export class IntentManager {
   async validateInputForStep(
     stepOptions: any,
     stepKey: string,
-    stepId: string,
+    step: any,
     value: string,
     validateFn: any,
   ) {
@@ -223,7 +224,7 @@ export class IntentManager {
       errorCode: undefined,
     };
     if (stepOptions.length === 0) {
-      const stepValidationResult = await validateFn(stepId, value, {
+      const stepValidationResult = await validateFn(step, value, {
         stepKey,
         stepOptions,
       });
