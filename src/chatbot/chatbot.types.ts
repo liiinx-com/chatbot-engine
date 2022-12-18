@@ -52,6 +52,8 @@ export class ChatBotStep {
   userResponseType: 'no-response' | 'multiple-choice' | 'fill-in-blank'; // when userResponseType=multiple-choice => built-in validator goes first
   userOptionsType?: 'static';
 
+  responses?: ChatBotResponse[];
+
   options?: StepOption[]; // when responseType == multiple-choice
   validatorUrl?: string; // when responseType == fill-in-blank | multiple-choice
   // textAndOptionsUrl: "" // TODO: 0.1.x

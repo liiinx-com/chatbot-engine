@@ -195,7 +195,7 @@ export class IntentManager {
 
       // UserCurrentStep is complete and add possible responses
       console.log('------step completed', userCurrentStep.id);
-      // intentResponses.forEach((r: ChatBotResponse) => result.push(r));
+      userCurrentStep.responses.forEach((r: ChatBotResponse) => result.push(r));
 
       await this.updateUserActiveStepId(userId, {
         stepId: gotoNextStepId,
