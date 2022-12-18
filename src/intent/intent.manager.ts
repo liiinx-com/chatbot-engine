@@ -139,8 +139,8 @@ export class IntentManager {
           result.push(currentStepResponse);
           return result;
         } else {
+          // TODO: use built-in options validation if stepResponseType === multiple
           const { response: validatedResponse, ok: validationOk } =
-            // TODO: use built-in options validation if stepResponseType === multiple
             await this.validateInputForStep(
               currentStepOptions,
               stepKey,
@@ -148,6 +148,8 @@ export class IntentManager {
               userInput,
               validateFn,
             );
+
+          console.log('hhhhhhhhhhere', validationOk);
 
           if (!validationOk) return [...result, currentStepResponse];
           // 3. Update user output for the current active step
@@ -161,9 +163,11 @@ export class IntentManager {
 
       // 4. Check if intent is complete
       const { isIntentComplete, nextStepId } = await getNextStepFor(
-        userActiveStepId,
+        userCurrentStep,
         { message },
       );
+
+      console.log('----------', isIntentComplete, userCurrentStep.id);
 
       // 5. Handle Intent Complete and set nextStep if completed
       let gotoNextStepId: string;
@@ -253,7 +257,10 @@ export class IntentManager {
         };
     }
 
-    const validValues = stepOptions.map(({ numericValue }) => numericValue);
+    const validValues = stepOptions.map(({ numericValue }) =>
+      numericValue.toString(),
+    );
+
     if (!validValues.includes(value.toString()))
       return {
         ok: false,
@@ -262,7 +269,7 @@ export class IntentManager {
       };
 
     const selectedOption = stepOptions.find(
-      ({ numericValue }) => numericValue === value.toString(),
+      ({ numericValue }) => numericValue.toString() === value.toString(),
     );
 
     return {
