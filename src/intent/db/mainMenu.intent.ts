@@ -54,5 +54,6 @@ export const mainMenuIntent: ChatBotIntent = {
   starterStepId: 'main-menu-step-1',
 
   handlerModule: 'simpleIntentHandler',
+  whenCompleteGotoStepId: 'main-menu-step-1',
   steps: [mainMenuStep1],
 };

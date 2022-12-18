@@ -52,8 +52,8 @@ const getNextStepFor = async (
   intent: ChatBotIntent,
   options: any | undefined,
 ) => {
-  const result = { isIntentComplete: false, nextStep: null };
-
+  const result = { isIntentComplete: false, nextStepId: null };
+  console.log('oo', step);
   if (step.nextStepId) {
     return { ...result, nextStepId: step.nextStepId };
   }
