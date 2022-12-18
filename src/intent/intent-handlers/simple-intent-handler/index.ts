@@ -91,6 +91,12 @@ const handleIntentComplete = async (
   if (intent.whenCompleteGotoStepId) {
     result.gotoStepId = intent.whenCompleteGotoStepId;
   }
+
+  // add intent responses
+  // TODO: send post req
+  if (intent.responses) {
+    result.responses = intent.responses.map((r) => r.caption);
+  }
   return result;
 };
 

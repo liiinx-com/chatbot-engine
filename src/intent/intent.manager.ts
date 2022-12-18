@@ -167,11 +167,12 @@ export class IntentManager {
       let gotoNextStepId: string;
       if (isIntentComplete) {
         const userCurrentOutput = await this.getUserCurrentOutput(userId);
-        const { gotoStepId, responses } = await handleIntentComplete(
-          userCurrentIntent,
-          userId,
-          userCurrentOutput,
-        );
+        const { gotoStepId, responses: intentResponses } =
+          await handleIntentComplete(
+            userCurrentIntent,
+            userId,
+            userCurrentOutput,
+          );
 
         // Add to queue
         const job = await this.intentQueue.add('complete', {
@@ -180,7 +181,7 @@ export class IntentManager {
         this.logger.log(`[i] job id ${job.id} registered on queue`);
 
         // Add intent responses
-        responses.forEach((r: any) => console.log);
+        intentResponses.forEach((r) => result.push(r));
 
         gotoNextStepId = gotoStepId //! Decide what to do next
           ? gotoStepId
