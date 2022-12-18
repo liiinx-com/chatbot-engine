@@ -36,11 +36,23 @@ export class WhatsappUtils {
     };
   }
 
+  private static getVideoMessageFrom(params: any) {
+    const { to, link, caption } = params;
+
+    return {
+      type: 'video',
+      to,
+      video: {
+        link,
+        caption,
+      },
+    };
+  }
+
   static getResponseMessageFrom(
     response: ChatBotResponse,
     { to, replyingMessageId = null, previewUrl = false },
   ): any {
-    console.log('nnnn', response);
     const params = { to, previewUrl, ...response };
     let result;
 
@@ -48,6 +60,8 @@ export class WhatsappUtils {
       result = WhatsappUtils.getSimpleTextMessageFrom(params);
     if (response.type === 'image')
       result = WhatsappUtils.getImageMessageFrom(params);
+    if (response.type === 'video')
+      result = WhatsappUtils.getVideoMessageFrom(params);
     // const result = ChatBotUtils.getInteractiveTextMessageFrom(params);
 
     if (replyingMessageId && false)

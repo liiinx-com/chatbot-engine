@@ -19,15 +19,6 @@ export const hiCurranIntent: ChatBotIntent = {
   type: 'intent',
   starterStepId: 'hi-step1',
 
-  responses: [
-    {
-      type: 'image',
-      link: 'https://jbmsmartstart.in/wp-content/uploads/2021/05/silhouette-man-jumping-from-failure-success-1600x900.jpg',
-      caption: 'sample intent response',
-      id: '1',
-    },
-  ],
-
   handlerModule: 'simpleIntentHandler',
   whenCompleteGotoStepId: invitationCheckStep1.id,
   steps: [hiCurranStep1],

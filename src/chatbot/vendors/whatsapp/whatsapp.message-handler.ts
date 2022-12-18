@@ -73,12 +73,7 @@ export class WhatsappMessageHandler {
         text: receivedInput,
       });
 
-    console.log('-------------');
-    console.log(JSON.stringify(responses, null, 2));
-    console.log('-------------');
-
     return responses.map((r: ChatBotResponse) => {
-      console.log('jik-jik', r);
       return WhatsappUtils.getResponseMessageFrom(r, {
         to: receivedMessage.customer.phoneNumber,
         replyingMessageId: receivedMessage.message.id,
