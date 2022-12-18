@@ -191,6 +191,7 @@ export class IntentManager {
         await this.resetUserOutput(userId);
       } else {
         gotoNextStepId = nextStepId;
+        console.log('------step completed', userCurrentStep.id);
       }
 
       await this.updateUserActiveStepId(userId, {
