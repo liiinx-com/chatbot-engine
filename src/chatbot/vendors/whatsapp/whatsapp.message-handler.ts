@@ -3,8 +3,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { WhatsappIncomingMessage, WhatsappResponse } from './whatapp.types';
 import { IntentManager } from 'src/intent/intent.manager';
 import { UserService } from 'src/user/user.service';
-
-import intentsObject from '../../intents';
 import { WhatsappService } from './whatsapp.service';
 
 @Injectable()
@@ -77,12 +75,13 @@ export class WhatsappMessageHandler {
       },
     );
 
-    return responses.map((r: any) =>
-      WhatsappUtils.getTextMessageFrom({
+    return responses.map((r: any) => {
+      console.log('jik jik', r);
+      return WhatsappUtils.getTextMessageFrom({
         text: r.response,
         to: receivedMessage.customer.phoneNumber,
         replyingMessageId: receivedMessage.message.id,
-      }),
-    );
+      });
+    });
   }
 }
