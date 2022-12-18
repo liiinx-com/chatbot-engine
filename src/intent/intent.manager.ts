@@ -149,8 +149,6 @@ export class IntentManager {
               validateFn,
             );
 
-          console.log('hhhhhhhhhhere', validationOk);
-
           if (!validationOk) return [...result, currentStepResponse];
           // 3. Update user output for the current active step
           await this.updateUserActiveStepId(userId, {
@@ -166,8 +164,6 @@ export class IntentManager {
         userCurrentStep,
         { message },
       );
-
-      console.log('----------', isIntentComplete, userCurrentStep.id);
 
       // 5. Handle Intent Complete and set nextStep if completed
       let gotoNextStepId: string;
@@ -195,8 +191,11 @@ export class IntentManager {
         await this.resetUserOutput(userId);
       } else {
         gotoNextStepId = nextStepId;
-        console.log('------step completed', userCurrentStep.id);
       }
+
+      // UserCurrentStep is complete and add possible responses
+      console.log('------step completed', userCurrentStep.id);
+      // intentResponses.forEach((r: ChatBotResponse) => result.push(r));
 
       await this.updateUserActiveStepId(userId, {
         stepId: gotoNextStepId,

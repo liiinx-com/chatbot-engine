@@ -53,7 +53,7 @@ const getNextStepFor = async (
   options: any | undefined,
 ) => {
   const result = { isIntentComplete: false, nextStepId: null };
-  console.log('oo', step);
+
   if (step.nextStepId) {
     return { ...result, nextStepId: step.nextStepId };
   }
