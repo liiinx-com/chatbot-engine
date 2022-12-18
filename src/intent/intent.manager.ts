@@ -181,7 +181,7 @@ export class IntentManager {
         this.logger.log(`[i] job id ${job.id} registered on queue`);
 
         // Add intent responses
-        intentResponses.forEach((r) => result.push(r));
+        intentResponses.forEach((r) => result.push({ response: r }));
 
         gotoNextStepId = gotoStepId //! Decide what to do next
           ? gotoStepId
