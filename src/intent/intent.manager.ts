@@ -129,7 +129,7 @@ export class IntentManager {
       const currentStepResponse = new ChatBotResponse();
       currentStepResponse.type = 'text';
       currentStepResponse.text =
-        currentStepResponse +
+        currentStepText +
         (stepRequiresUserInput
           ? '\n\n' + this.getOptionsTextFromOptions(currentStepOptions)
           : '');

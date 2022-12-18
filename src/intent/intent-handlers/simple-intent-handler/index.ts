@@ -95,7 +95,7 @@ const handleIntentComplete = async (
   // add intent responses
   // TODO: send post req
   if (intent.responses) {
-    result.responses = intent.responses.map((r) => r.caption);
+    result.responses = intent.responses;
   }
   return result;
 };
