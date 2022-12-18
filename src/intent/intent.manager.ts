@@ -154,6 +154,11 @@ export class IntentManager {
           await this.updateUserActiveStepId(userId, {
             changes: validatedResponse,
           });
+          // TODO: UserCurrentStep is complete and add possible responses
+          console.log(
+            '-->step ' + userCurrentStep.id + 'complete with ',
+            validatedResponse,
+          );
         }
       } else {
         result.push(currentStepResponse);
@@ -192,9 +197,6 @@ export class IntentManager {
       } else {
         gotoNextStepId = nextStepId;
       }
-
-      // UserCurrentStep is complete and add possible responses
-      console.log('------step completed', userCurrentStep.id);
 
       await this.updateUserActiveStepId(userId, {
         stepId: gotoNextStepId,
