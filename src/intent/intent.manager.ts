@@ -5,6 +5,7 @@ import { UserService } from 'src/user/user.service';
 import intentHandlers from './intent-handlers/index';
 import { ERRORS, IncomingMessage } from './intent.types';
 import { steps, intents } from './db/index';
+import { ChatBotResponse } from 'src/chatbot/chatbot.types';
 
 @Injectable()
 export class IntentManager {
@@ -87,8 +88,8 @@ export class IntentManager {
     chatbotId: string,
     userId: number,
     message: IncomingMessage,
-  ): Promise<any> {
-    const result = [];
+  ): Promise<ChatBotResponse[]> {
+    const result: ChatBotResponse[] = [];
     let inputConsumed = false;
     const { text: userInput } = message;
 
@@ -124,13 +125,14 @@ export class IntentManager {
           isNewUser: userActiveStepInfo.isNewUser,
         },
       );
-      const currentStepResponse = {
-        response:
-          currentStepText +
-          (stepRequiresUserInput
-            ? '\n\n' + this.getOptionsTextFromOptions(currentStepOptions)
-            : ''),
-      };
+
+      const currentStepResponse = new ChatBotResponse();
+      currentStepResponse.type = 'text';
+      currentStepResponse.text =
+        currentStepResponse +
+        (stepRequiresUserInput
+          ? '\n\n' + this.getOptionsTextFromOptions(currentStepOptions)
+          : '');
 
       if (stepRequiresUserInput) {
         if (inputConsumed) {
@@ -181,7 +183,7 @@ export class IntentManager {
         this.logger.log(`[i] job id ${job.id} registered on queue`);
 
         // Add intent responses
-        intentResponses.forEach((r) => result.push({ response: r }));
+        intentResponses.forEach((r: ChatBotResponse) => result.push(r));
 
         gotoNextStepId = gotoStepId //! Decide what to do next
           ? gotoStepId

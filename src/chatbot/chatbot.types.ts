@@ -33,10 +33,13 @@ export class ChatBotIntent {
 }
 
 export class ChatBotResponse {
-  id: string;
+  id?: string;
   type: 'text' | 'image' | 'video';
   link?: string;
   caption?: string;
+  text?: string;
+  templateName?: string;
+  templateParams?: any;
 }
 
 export class ChatBotStep {

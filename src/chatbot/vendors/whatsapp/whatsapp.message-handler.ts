@@ -4,6 +4,7 @@ import { WhatsappIncomingMessage, WhatsappResponse } from './whatapp.types';
 import { IntentManager } from 'src/intent/intent.manager';
 import { UserService } from 'src/user/user.service';
 import { WhatsappService } from './whatsapp.service';
+import { ChatBotResponse } from 'src/chatbot/chatbot.types';
 
 @Injectable()
 export class WhatsappMessageHandler {
@@ -55,7 +56,7 @@ export class WhatsappMessageHandler {
     chatbotId: string,
     userId: number,
     receivedMessage: WhatsappIncomingMessage,
-  ): Promise<any> {
+  ): Promise<ChatBotResponse[]> {
     const {
       customer: { profile },
       message: {
@@ -66,14 +67,11 @@ export class WhatsappMessageHandler {
       },
     } = receivedMessage;
 
-    const responses = await this.intentManager.processTextMessageForUser(
-      chatbotId,
-      userId,
-      {
+    const responses: ChatBotResponse[] =
+      await this.intentManager.processTextMessageForUser(chatbotId, userId, {
         user: { id: userId, name: profile.name },
         text: receivedInput,
-      },
-    );
+      });
 
     return responses.map((r: any) => {
       console.log('jik jik', r);
