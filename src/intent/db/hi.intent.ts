@@ -19,6 +19,8 @@ export const hiCurranIntent: ChatBotIntent = {
   type: 'intent',
   starterStepId: 'hi-step1',
 
+  responses: [{ type: 'text', caption: 'sample intent response', id: '1' }],
+
   handlerModule: 'simpleIntentHandler',
   whenCompleteGotoStepId: invitationCheckStep1.id,
   steps: [hiCurranStep1],

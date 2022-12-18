@@ -86,7 +86,7 @@ const handleIntentComplete = async (
   userId: number,
   payload: any | undefined,
 ) => {
-  const result = { gotoStepId: null };
+  const result = { responses: [], gotoStepId: null };
   console.log(userId, 'completed intent ' + intent.title + ' with', payload);
   if (intent.whenCompleteGotoStepId) {
     result.gotoStepId = intent.whenCompleteGotoStepId;

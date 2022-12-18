@@ -21,12 +21,22 @@ export class ChatBotIntent {
 
   handlerModule: 'simpleIntentHandler';
 
+  responses?: ChatBotResponse[];
+  responsesResolverUrl?: string;
+
   // one of these two should be set
   whenCompleteGotoStepId?: string;
   WhenCompleteCallbackUrl?: string;
 
   // onCompleteMessageId: '', // TODO: 0.1.x
   steps: ChatBotStep[];
+}
+
+export class ChatBotResponse {
+  id: string;
+  type: 'text' | 'image' | 'video';
+  link?: string;
+  caption?: string;
 }
 
 export class ChatBotStep {

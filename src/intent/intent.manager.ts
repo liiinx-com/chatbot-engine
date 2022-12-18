@@ -167,7 +167,7 @@ export class IntentManager {
       let gotoNextStepId: string;
       if (isIntentComplete) {
         const userCurrentOutput = await this.getUserCurrentOutput(userId);
-        const { gotoStepId } = await handleIntentComplete(
+        const { gotoStepId, responses } = await handleIntentComplete(
           userCurrentIntent,
           userId,
           userCurrentOutput,
@@ -178,6 +178,9 @@ export class IntentManager {
           shillang: { output: userCurrentOutput, message },
         });
         this.logger.log(`[i] job id ${job.id} registered on queue`);
+
+        // Add intent responses
+        responses.forEach((r: any) => console.log);
 
         gotoNextStepId = gotoStepId //! Decide what to do next
           ? gotoStepId
