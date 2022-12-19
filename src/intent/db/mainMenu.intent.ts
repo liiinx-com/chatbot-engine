@@ -6,11 +6,19 @@ import {
 
 const mainMenuStep1Options: StepOption[] = [
   {
+    id: 'someId0',
+    order: 1,
+    label: 'Building Contact',
+    value: 'building-contact',
+    numericValue: 1,
+    gotoStepId: 'building-info-menu-1',
+  },
+  {
     id: 'someId1',
     order: 1,
     label: 'How it works',
     value: 'how_it_works',
-    numericValue: 1,
+    numericValue: 2,
     responses: [
       {
         type: 'text',
@@ -23,7 +31,7 @@ const mainMenuStep1Options: StepOption[] = [
     order: 1,
     label: 'New Amazon/Walmart Return Pickup',
     value: 'new_return_order',
-    numericValue: 2,
+    numericValue: 3,
     gotoStepId: 'invitation-step-1',
   },
   {
@@ -31,7 +39,7 @@ const mainMenuStep1Options: StepOption[] = [
     order: 3,
     label: 'My incoming pickups',
     value: 'my_pickups',
-    numericValue: 3,
+    numericValue: 4,
     responses: [
       {
         type: 'image',
@@ -45,7 +53,7 @@ const mainMenuStep1Options: StepOption[] = [
     order: 4,
     label: 'Pricing',
     value: 'pricing',
-    numericValue: 4,
+    numericValue: 5,
     responses: [
       {
         type: 'text',
@@ -62,7 +70,7 @@ export const mainMenuStep1: ChatBotStep = {
   key: 'selectedItem',
   userResponseType: 'multiple-choice',
 
-  userOptionsType: 'static',
+  // userOptionsType: 'static',
   text: 'How can I help you today, ${name}?',
   options: mainMenuStep1Options,
 };

@@ -125,6 +125,7 @@ export class IntentManager {
         },
       );
 
+      // ! TODO: Do NOT create this here. move it to its parent
       const currentStepResponse = new ChatBotResponse();
       currentStepResponse.type = 'text';
       currentStepResponse.text =
