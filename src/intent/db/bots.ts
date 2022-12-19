@@ -3,6 +3,7 @@ import {
   ChatBotIntent,
   ChatBotStep,
 } from '../../chatbot/chatbot.types';
+import { buildingInfoIntent, buildingInfoStep1 } from './buildingInfo';
 import { hiCurranIntent as intent1, hiCurranStep1 as step1 } from './hi.intent';
 import {
   invitationCheckIntent as intent2,
@@ -24,5 +25,10 @@ const curranBot: ChatBot = {
 };
 
 export const bots: ChatBot[] = [curranBot];
-export const intents: ChatBotIntent[] = [intent1, intent2, intent3];
-export const steps: ChatBotStep[] = [step1, step2, step3];
+export const intents: ChatBotIntent[] = [
+  buildingInfoIntent,
+  intent1,
+  intent2,
+  intent3,
+];
+export const steps: ChatBotStep[] = [step1, step2, step3, buildingInfoStep1];

@@ -17,7 +17,7 @@ export class ChatBotIntent {
   botId: string;
   starterStepId: string;
   title: string;
-  type: 'intent' | 'menu';
+  type: 'intent' | 'menu'; // TODO: candidate to remove
 
   handlerModule: 'simpleIntentHandler';
 
@@ -51,7 +51,7 @@ export class ChatBotStep {
   key: string;
   text: string;
   userResponseType: 'no-response' | 'multiple-choice' | 'fill-in-blank'; // when userResponseType=multiple-choice => built-in validator goes first
-  userOptionsType?: 'static';
+  // userOptionsType?: 'static'; // TODO: candidate to remove
 
   // responses?: ChatBotResponse[];
 

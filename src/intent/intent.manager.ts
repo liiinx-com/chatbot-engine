@@ -10,7 +10,6 @@ import { ChatBotResponse } from 'src/chatbot/chatbot.types';
 @Injectable()
 export class IntentManager {
   private logger = new Logger(IntentManager.name);
-  private STEP_ID_DELIMITER = '.';
   private NEW_LINE = '\n';
   private intentsMap = new Map();
 
@@ -72,6 +71,8 @@ export class IntentManager {
 
     const currentStep = steps.find((step) => step.id === stepId);
 
+    console.log('sssss', currentStep, stepId);
+
     const currentIntent = intents.find(
       (intent) => intent.id === currentStep.intentId,
     );
@@ -125,6 +126,9 @@ export class IntentManager {
         },
       );
 
+      // ! TODO: Do NOT create this here. move it to its parent
+      // ! TODO: Do NOT create this here. move it to its parent
+      // ! TODO: Do NOT create this here. move it to its parent
       const currentStepResponse = new ChatBotResponse();
       currentStepResponse.type = 'text';
       currentStepResponse.text =
@@ -210,10 +214,18 @@ export class IntentManager {
         await this.resetUserOutput(userId);
       } else {
         // selectedOption.nextStepId or step.nextStepId
-        gotoNextStepId =
-          userSelectedOption && userSelectedOption.nextStepId
-            ? userSelectedOption.nextStepId
-            : nextStepId;
+        gotoNextStepId = nextStepId;
+      }
+
+      // 10. override selectedOption next step if applicable
+      if (userSelectedOption && userSelectedOption.gotoStepId) {
+        this.logger.log(
+          '[i] overidding ' +
+            gotoNextStepId +
+            ' to ' +
+            userSelectedOption.gotoStepId,
+        );
+        gotoNextStepId = userSelectedOption.gotoStepId;
       }
 
       await this.updateUserActiveStepId(userId, {
