@@ -33,8 +33,9 @@ const mainMenuStep1Options: StepOption[] = [
     numericValue: 3,
     responses: [
       {
-        type: 'text',
-        text: 'you have selected my incoming pickups',
+        type: 'video',
+        link: 'https://youtu.be/X9JExlvPwcs?t=16',
+        caption: 'Keep Working Hard!',
       },
     ],
   },
@@ -44,6 +45,13 @@ const mainMenuStep1Options: StepOption[] = [
     label: 'Pricing',
     value: 'pricing',
     numericValue: 4,
+    responses: [
+      {
+        type: 'text',
+        text: 'Watch this video please https://youtu.be/X9JExlvPwcs?t=16',
+        previewUrl: true,
+      },
+    ],
   },
 ];
 

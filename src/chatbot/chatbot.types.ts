@@ -40,6 +40,7 @@ export class ChatBotResponse {
   text?: string;
   templateName?: string;
   templateParams?: any;
+  previewUrl?: boolean;
 }
 
 export class ChatBotStep {
