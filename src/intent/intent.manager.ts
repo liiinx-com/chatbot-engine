@@ -133,6 +133,7 @@ export class IntentManager {
           ? '\n\n' + this.getOptionsTextFromOptions(currentStepOptions)
           : '');
 
+      let userSelectedOption;
       if (stepRequiresUserInput) {
         if (inputConsumed) {
           result.push(currentStepResponse);
@@ -151,7 +152,9 @@ export class IntentManager {
             validateFn,
           );
 
+          userSelectedOption = selectedOption;
           if (!validationOk) return [...result, currentStepResponse];
+
           // 3. Update user output for the current active step
           await this.updateUserActiveStepId(userId, {
             changes: validatedResponse,
@@ -162,7 +165,8 @@ export class IntentManager {
             validatedResponse,
             selectedOption?.responses?.length,
           );
-          // UserCurrentStep is complete and add selected option responses
+
+          // 4. UserCurrentStep is complete, Add selected option responses
           if (selectedOption?.responses) {
             selectedOption.responses.forEach((r: ChatBotResponse) =>
               result.push(r),
@@ -173,38 +177,43 @@ export class IntentManager {
         result.push(currentStepResponse);
       }
 
-      // 4. Check if intent is complete
+      // 5. Check if intent is complete
       const { isIntentComplete, nextStepId } = await getNextStepFor(
         userCurrentStep,
         { message },
       );
 
-      // 5. Handle Intent Complete and set nextStep if completed
+      // 6. Handle Intent Complete and set nextStep if completed
       let gotoNextStepId: string;
       if (isIntentComplete) {
         const userCurrentOutput = await this.getUserCurrentOutput(userId);
-        const { gotoStepId, responses: intentResponses } =
+        const { gotoStepId: intentGotoStepId, responses: intentResponses } =
           await handleIntentComplete(
             userCurrentIntent,
             userId,
             userCurrentOutput,
           );
 
-        // Add to queue
+        // 7. Add to queue
         const job = await this.intentQueue.add('complete', {
           shillang: { output: userCurrentOutput, message },
         });
         this.logger.log(`[i] job id ${job.id} registered on queue`);
 
-        // Add intent responses
+        // 8. Add intent responses
         intentResponses.forEach((r: ChatBotResponse) => result.push(r));
 
-        gotoNextStepId = gotoStepId //! Decide what to do next
-          ? gotoStepId
+        // 9. Determine NextStep
+        gotoNextStepId = intentGotoStepId //! Decide what to do next
+          ? intentGotoStepId
           : await this.getFallbackStepIdForUser(userId);
         await this.resetUserOutput(userId);
       } else {
-        gotoNextStepId = nextStepId;
+        // selectedOption.nextStepId or step.nextStepId
+        gotoNextStepId =
+          userSelectedOption && userSelectedOption.nextStepId
+            ? userSelectedOption.nextStepId
+            : nextStepId;
       }
 
       await this.updateUserActiveStepId(userId, {
@@ -213,27 +222,6 @@ export class IntentManager {
       inputConsumed = true;
     } while (true);
   }
-
-  //   private async handleCompleteAndGetNextStepId({
-  //     handleIntentCompleteFn,
-  //     userId,
-  //     validatedResponse,
-  //     message,
-  //   }) {
-  //     const userCurrentOutput = await this.getUserCurrentOutput(userId);
-  //     const { gotoStepId } = await handleIntentCompleteFn(
-  //       userId,
-  //       {
-  //         ...userCurrentOutput,
-  //         ...validatedResponse,
-  //       },
-  //       { message },
-  //     );
-
-  //     return gotoStepId
-  //       ? gotoStepId
-  //       : await this.getFallbackIntentForUser(userId);
-  //   }
 
   private getOptionsTextFromOptions(options: any) {
     return options

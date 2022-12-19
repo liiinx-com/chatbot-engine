@@ -70,4 +70,5 @@ export class StepOption {
 
   responses?: ChatBotResponse[];
   responsesResolverUrl?: string;
+  gotoStepId?: string;
 }

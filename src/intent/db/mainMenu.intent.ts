@@ -24,6 +24,7 @@ const mainMenuStep1Options: StepOption[] = [
     label: 'New Amazon/Walmart Return Pickup',
     value: 'new_return_order',
     numericValue: 2,
+    gotoStepId: 'invitation-step-1',
   },
   {
     id: 'someId3',
@@ -33,9 +34,9 @@ const mainMenuStep1Options: StepOption[] = [
     numericValue: 3,
     responses: [
       {
-        type: 'video',
-        link: 'https://youtu.be/X9JExlvPwcs?t=16',
-        caption: 'Keep Working Hard!',
+        type: 'image',
+        link: 'https://media.licdn.com/dms/image/C4E12AQGMhuVyjTdDgA/article-cover_image-shrink_423_752/0/1562962503840?e=1677110400&v=beta&t=qiSvcZoCed8mAwiCm85Mjd3QlIBlQoQGZqHGYdzJcFs',
+        caption: 'We made it possible!',
       },
     ],
   },
@@ -48,7 +49,7 @@ const mainMenuStep1Options: StepOption[] = [
     responses: [
       {
         type: 'text',
-        text: 'Watch this video please https://youtu.be/X9JExlvPwcs?t=16',
+        text: 'Watch this video please \n\n https://youtu.be/X9JExlvPwcs?t=16',
         previewUrl: true,
       },
     ],
