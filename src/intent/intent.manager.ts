@@ -157,6 +157,7 @@ export class IntentManager {
           console.log(
             '-->step ' + userCurrentStep.id + 'complete with ',
             validatedResponse,
+            userCurrentStep?.responses?.length,
           );
         }
       } else {

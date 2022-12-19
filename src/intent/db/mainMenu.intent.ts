@@ -11,6 +11,12 @@ const mainMenuStep1Options: StepOption[] = [
     label: 'How it works',
     value: 'how_it_works',
     numericValue: 1,
+    responses: [
+      {
+        type: 'text',
+        text: 'you have selected how it works',
+      },
+    ],
   },
   {
     id: 'someId2',
@@ -25,6 +31,12 @@ const mainMenuStep1Options: StepOption[] = [
     label: 'My incoming pickups',
     value: 'my_pickups',
     numericValue: 3,
+    responses: [
+      {
+        type: 'text',
+        text: 'you have selected my incoming pickups',
+      },
+    ],
   },
   {
     id: 'someId4',
