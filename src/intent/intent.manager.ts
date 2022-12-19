@@ -139,26 +139,35 @@ export class IntentManager {
           return result;
         } else {
           // TODO: use built-in options validation if stepResponseType === multiple
-          const { response: validatedResponse, ok: validationOk } =
-            await this.validateInputForStep(
-              currentStepOptions,
-              stepKey,
-              userCurrentStep,
-              userInput,
-              validateFn,
-            );
+          const {
+            response: validatedResponse,
+            selectedOption,
+            ok: validationOk,
+          } = await this.validateInputForStep(
+            currentStepOptions,
+            stepKey,
+            userCurrentStep,
+            userInput,
+            validateFn,
+          );
 
           if (!validationOk) return [...result, currentStepResponse];
           // 3. Update user output for the current active step
           await this.updateUserActiveStepId(userId, {
             changes: validatedResponse,
           });
-          // TODO: UserCurrentStep is complete and add possible responses
+
           console.log(
             '-->step ' + userCurrentStep.id + 'complete with ',
             validatedResponse,
-            userCurrentStep?.responses?.length,
+            selectedOption?.responses?.length,
           );
+          // UserCurrentStep is complete and add selected option responses
+          if (selectedOption?.responses) {
+            selectedOption.responses.forEach((r: ChatBotResponse) =>
+              result.push(r),
+            );
+          }
         }
       } else {
         result.push(currentStepResponse);
@@ -252,6 +261,7 @@ export class IntentManager {
       if (stepValidationResult.ok)
         return {
           ...result,
+          selectedOption: null,
           response: {
             [stepKey]: value,
           },
@@ -267,6 +277,7 @@ export class IntentManager {
         ok: false,
         errorCode: ERRORS.INVALID_INPUT,
         response: null,
+        selectedOption: null,
       };
 
     const selectedOption = stepOptions.find(
@@ -275,6 +286,7 @@ export class IntentManager {
 
     return {
       ...result,
+      selectedOption,
       response: {
         [stepKey]: selectedOption.value,
       },
