@@ -210,10 +210,18 @@ export class IntentManager {
         await this.resetUserOutput(userId);
       } else {
         // selectedOption.nextStepId or step.nextStepId
-        gotoNextStepId =
-          userSelectedOption && userSelectedOption.nextStepId
-            ? userSelectedOption.nextStepId
-            : nextStepId;
+        gotoNextStepId = nextStepId;
+      }
+
+      // 10. override selectedOption next step if applicable
+      if (userSelectedOption && userSelectedOption.gotoStepId) {
+        this.logger.log(
+          '[i] overidding ' +
+            gotoNextStepId +
+            ' to ' +
+            userSelectedOption.gotoStepId,
+        );
+        gotoNextStepId = userSelectedOption.gotoStepId;
       }
 
       await this.updateUserActiveStepId(userId, {
