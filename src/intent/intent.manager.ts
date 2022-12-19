@@ -5,6 +5,7 @@ import { UserService } from 'src/user/user.service';
 import intentHandlers from './intent-handlers/index';
 import { ERRORS, IncomingMessage } from './intent.types';
 import { steps, intents } from './db/index';
+import { ChatBotResponse } from 'src/chatbot/chatbot.types';
 
 @Injectable()
 export class IntentManager {
@@ -24,7 +25,7 @@ export class IntentManager {
     return user?.activeStepId
       ? { activeStepId: user.activeStepId, isNewUser: false }
       : {
-          activeStepId: await this.getFallbackIntentForUser(userId),
+          activeStepId: await this.getFallbackStepIdForUser(userId),
           isNewUser: true,
         };
   }
@@ -60,29 +61,24 @@ export class IntentManager {
     return user;
   }
 
-  private async getFallbackIntentForUser(userId: number) {
-    return 'hi.1';
+  private async getFallbackStepIdForUser(userId: number) {
+    //TODO: get bot default intent and then starterStepId for the intent
+    return 'hi-step1';
     // return "newReturnOrder.1";
   }
 
-  async getHandlerAndIntentAndStepByStepId(stepId: string) {
+  async getHandlerAndIntentAndStepByStepId(stepId: string): Promise<any> {
     if (!stepId) throw new Error(ERRORS.STEP_NOT_FOUND);
 
     const currentStep = steps.find((step) => step.id === stepId);
+
     const currentIntent = intents.find(
       (intent) => intent.id === currentStep.intentId,
     );
 
-    console.log('currentStep', currentStep);
-    console.log('currentIntent', currentIntent);
-
-    const [intentKey] = stepId.split(this.STEP_ID_DELIMITER);
-
-    if (this.intentsMap.has(intentKey)) {
-      const intent = this.intentsMap.get(intentKey);
-
-      const handler = intentHandlers[intentKey];
-      return [handler, intent, 'step'];
+    if (currentStep && currentIntent) {
+      const handler = intentHandlers[currentIntent.handlerModule];
+      return [handler, currentIntent, currentStep];
     }
     throw new Error(ERRORS.STEP_NOT_FOUND);
   }
@@ -91,8 +87,8 @@ export class IntentManager {
     chatbotId: string,
     userId: number,
     message: IncomingMessage,
-  ): Promise<any> {
-    const result = [];
+  ): Promise<ChatBotResponse[]> {
+    const result: ChatBotResponse[] = [];
     let inputConsumed = false;
     const { text: userInput } = message;
 
@@ -104,57 +100,82 @@ export class IntentManager {
       this.logger.log(`[i] activeStepId = ${userActiveStepId}`);
 
       // 2. Get Handler Module, Intent and Step
-      const [handlerModule, intent, currentStep] =
+      const [handlerModule, userCurrentIntent, userCurrentStep] =
         await this.getHandlerAndIntentAndStepByStepId(userActiveStepId); //TODO: implement------------------------
+
       const {
-        getStepTextAndOptionsByStepId,
+        getStepTextAndOptionsByStep,
         validate: validateFn,
         getNextStepFor,
         handleIntentComplete,
-        requiresUserResponse, // TODO: candidate to remove. when validateFn is available means it requires-user-response
       } = handlerModule;
 
       // 3. Get Step Text and Options for the Current Step
-      const [currentStepText, currentStepOptions, stepKey] =
-        await getStepTextAndOptionsByStepId(userActiveStepId, {
+      const [
+        currentStepText,
+        currentStepOptions,
+        stepKey,
+        stepRequiresUserInput,
+      ] = await getStepTextAndOptionsByStep(
+        userCurrentStep,
+        userCurrentIntent,
+        {
           message,
           isNewUser: userActiveStepInfo.isNewUser,
-        });
-      const currentStepResponse = {
-        response:
-          currentStepText +
-          (requiresUserResponse
-            ? '\n\n' + this.getOptionsTextFromOptions(currentStepOptions)
-            : ''),
-      };
+        },
+      );
 
-      if (requiresUserResponse) {
+      const currentStepResponse = new ChatBotResponse();
+      currentStepResponse.type = 'text';
+      currentStepResponse.text =
+        currentStepText +
+        (stepRequiresUserInput
+          ? '\n\n' + this.getOptionsTextFromOptions(currentStepOptions)
+          : '');
+
+      if (stepRequiresUserInput) {
         if (inputConsumed) {
           result.push(currentStepResponse);
           return result;
         } else {
-          const { response: validatedResponse, ok: validationOk } =
-            await this.validateInputForStep(
-              currentStepOptions,
-              stepKey,
-              userActiveStepId,
-              userInput,
-              validateFn,
-            );
+          // TODO: use built-in options validation if stepResponseType === multiple
+          const {
+            response: validatedResponse,
+            selectedOption,
+            ok: validationOk,
+          } = await this.validateInputForStep(
+            currentStepOptions,
+            stepKey,
+            userCurrentStep,
+            userInput,
+            validateFn,
+          );
 
           if (!validationOk) return [...result, currentStepResponse];
           // 3. Update user output for the current active step
           await this.updateUserActiveStepId(userId, {
             changes: validatedResponse,
           });
+
+          console.log(
+            '-->step ' + userCurrentStep.id + 'complete with ',
+            validatedResponse,
+            selectedOption?.responses?.length,
+          );
+          // UserCurrentStep is complete and add selected option responses
+          if (selectedOption?.responses) {
+            selectedOption.responses.forEach((r: ChatBotResponse) =>
+              result.push(r),
+            );
+          }
         }
       } else {
         result.push(currentStepResponse);
       }
 
       // 4. Check if intent is complete
-      const { isIntentComplete, nextStep } = await getNextStepFor(
-        userActiveStepId,
+      const { isIntentComplete, nextStepId } = await getNextStepFor(
+        userCurrentStep,
         { message },
       );
 
@@ -162,23 +183,28 @@ export class IntentManager {
       let gotoNextStepId: string;
       if (isIntentComplete) {
         const userCurrentOutput = await this.getUserCurrentOutput(userId);
-        const { gotoStepId } = await handleIntentComplete(
-          userId,
-          userCurrentOutput,
-        );
+        const { gotoStepId, responses: intentResponses } =
+          await handleIntentComplete(
+            userCurrentIntent,
+            userId,
+            userCurrentOutput,
+          );
 
         // Add to queue
         const job = await this.intentQueue.add('complete', {
-          shilang: { output: userCurrentOutput, message },
+          shillang: { output: userCurrentOutput, message },
         });
-        this.logger.log(`[i] job id ${job.id} registerd on queue`);
+        this.logger.log(`[i] job id ${job.id} registered on queue`);
+
+        // Add intent responses
+        intentResponses.forEach((r: ChatBotResponse) => result.push(r));
 
         gotoNextStepId = gotoStepId //! Decide what to do next
           ? gotoStepId
-          : await this.getFallbackIntentForUser(userId);
+          : await this.getFallbackStepIdForUser(userId);
         await this.resetUserOutput(userId);
       } else {
-        gotoNextStepId = nextStep.id;
+        gotoNextStepId = nextStepId;
       }
 
       await this.updateUserActiveStepId(userId, {
@@ -218,7 +244,7 @@ export class IntentManager {
   async validateInputForStep(
     stepOptions: any,
     stepKey: string,
-    stepId: string,
+    step: any,
     value: string,
     validateFn: any,
   ) {
@@ -228,33 +254,39 @@ export class IntentManager {
       errorCode: undefined,
     };
     if (stepOptions.length === 0) {
-      const stepValidationResult = await validateFn(stepId, value, {
+      const stepValidationResult = await validateFn(step, value, {
         stepKey,
         stepOptions,
       });
       if (stepValidationResult.ok)
         return {
           ...result,
+          selectedOption: null,
           response: {
             [stepKey]: value,
           },
         };
     }
 
-    const validValues = stepOptions.map(({ numericValue }) => numericValue);
+    const validValues = stepOptions.map(({ numericValue }) =>
+      numericValue.toString(),
+    );
+
     if (!validValues.includes(value.toString()))
       return {
         ok: false,
         errorCode: ERRORS.INVALID_INPUT,
         response: null,
+        selectedOption: null,
       };
 
     const selectedOption = stepOptions.find(
-      ({ numericValue }) => numericValue === value.toString(),
+      ({ numericValue }) => numericValue.toString() === value.toString(),
     );
 
     return {
       ...result,
+      selectedOption,
       response: {
         [stepKey]: selectedOption.value,
       },

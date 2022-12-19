@@ -1,3 +1,4 @@
+import { ChatBotResponse } from 'src/chatbot/chatbot.types';
 import { WhatsappIncomingMessage } from './whatapp.types';
 
 export class WhatsappUtils {
@@ -9,7 +10,9 @@ export class WhatsappUtils {
     // });
   }
 
-  private static getSimpleTextMessageFrom({ to, text, previewUrl = false }) {
+  private static getSimpleTextMessageFrom(params: any) {
+    const { to, text, previewUrl = false } = params;
+
     return {
       type: 'text',
       to,
@@ -20,18 +23,49 @@ export class WhatsappUtils {
     };
   }
 
-  static getTextMessageFrom({
-    to,
-    text,
-    replyingMessageId = null,
-    previewUrl = false,
-  }): any {
-    const params = { to, text, previewUrl };
-    const result = WhatsappUtils.getSimpleTextMessageFrom(params);
+  private static getImageMessageFrom(params: any) {
+    const { to, link, caption } = params;
+
+    return {
+      type: 'image',
+      to,
+      image: {
+        link,
+        caption,
+      },
+    };
+  }
+
+  private static getVideoMessageFrom(params: any) {
+    const { to, link, caption } = params;
+
+    return {
+      type: 'video',
+      to,
+      video: {
+        link,
+        caption,
+      },
+    };
+  }
+
+  static getResponseMessageFrom(
+    response: ChatBotResponse,
+    { to, replyingMessageId = null, previewUrl = false },
+  ): any {
+    const params = { to, previewUrl, ...response };
+    let result;
+
+    if (response.type === 'text')
+      result = WhatsappUtils.getSimpleTextMessageFrom(params);
+    if (response.type === 'image')
+      result = WhatsappUtils.getImageMessageFrom(params);
+    if (response.type === 'video')
+      result = WhatsappUtils.getVideoMessageFrom(params);
     // const result = ChatBotUtils.getInteractiveTextMessageFrom(params);
 
     if (replyingMessageId && false)
-      // TODO: replyingMessageId
+      // TODO: replyingMessageId -
       return { ...result, context: { message_id: replyingMessageId } };
     return result;
   }

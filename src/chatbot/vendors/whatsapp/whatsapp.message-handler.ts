@@ -3,9 +3,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { WhatsappIncomingMessage, WhatsappResponse } from './whatapp.types';
 import { IntentManager } from 'src/intent/intent.manager';
 import { UserService } from 'src/user/user.service';
-
-import intentsObject from '../../intents';
 import { WhatsappService } from './whatsapp.service';
+import { ChatBotResponse } from 'src/chatbot/chatbot.types';
 
 @Injectable()
 export class WhatsappMessageHandler {
@@ -57,7 +56,7 @@ export class WhatsappMessageHandler {
     chatbotId: string,
     userId: number,
     receivedMessage: WhatsappIncomingMessage,
-  ): Promise<any> {
+  ): Promise<ChatBotResponse[]> {
     const {
       customer: { profile },
       message: {
@@ -68,21 +67,17 @@ export class WhatsappMessageHandler {
       },
     } = receivedMessage;
 
-    const responses = await this.intentManager.processTextMessageForUser(
-      chatbotId,
-      userId,
-      {
+    const responses: ChatBotResponse[] =
+      await this.intentManager.processTextMessageForUser(chatbotId, userId, {
         user: { id: userId, name: profile.name },
         text: receivedInput,
-      },
-    );
+      });
 
-    return responses.map((r: any) =>
-      WhatsappUtils.getTextMessageFrom({
-        text: r.response,
+    return responses.map((r: ChatBotResponse) => {
+      return WhatsappUtils.getResponseMessageFrom(r, {
         to: receivedMessage.customer.phoneNumber,
         replyingMessageId: receivedMessage.message.id,
-      }),
-    );
+      });
+    });
   }
 }

@@ -15,17 +15,32 @@ export class ChatBotIntent {
 
   id: string;
   botId: string;
+  starterStepId: string;
   title: string;
   type: 'intent' | 'menu';
 
   handlerModule: 'simpleIntentHandler';
 
+  responses?: ChatBotResponse[];
+  responsesResolverUrl?: string;
+
   // one of these two should be set
-  whenCompleteGotoIntentId?: string;
+  whenCompleteGotoStepId?: string;
   WhenCompleteCallbackUrl?: string;
 
   // onCompleteMessageId: '', // TODO: 0.1.x
   steps: ChatBotStep[];
+}
+
+export class ChatBotResponse {
+  id?: string;
+  type: 'text' | 'image' | 'video';
+  link?: string;
+  caption?: string;
+  text?: string;
+  templateName?: string;
+  templateParams?: any;
+  previewUrl?: boolean;
 }
 
 export class ChatBotStep {
@@ -37,6 +52,8 @@ export class ChatBotStep {
   text: string;
   userResponseType: 'no-response' | 'multiple-choice' | 'fill-in-blank'; // when userResponseType=multiple-choice => built-in validator goes first
   userOptionsType?: 'static';
+
+  // responses?: ChatBotResponse[];
 
   options?: StepOption[]; // when responseType == multiple-choice
   validatorUrl?: string; // when responseType == fill-in-blank | multiple-choice
@@ -50,4 +67,7 @@ export class StepOption {
   label: string;
   value: string;
   numericValue: number;
+
+  responses?: ChatBotResponse[];
+  responsesResolverUrl?: string;
 }

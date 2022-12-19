@@ -1,3 +1,5 @@
+import { ChatBotIntent, ChatBotStep } from 'src/chatbot/chatbot.types';
+
 const getStep1 = ({ name }) => ({
   previousStepId: null,
   id: 'hi.1',
@@ -28,27 +30,39 @@ const getOptionsForStep = async (stepId: string, options: any) => {
 };
 
 const validate = async (
-  stepId: string,
+  step: ChatBotStep,
+  // intent: ChatBotIntent,
   value: string,
   { stepKey, stepOptions },
 ) => {
-  return { ok: true };
+  console.log('====validating for ' + step.id + step.validatorUrl === '');
+  if (step.validatorUrl) {
+    // TODO: call validator url to validate
+    console.log(
+      'validating ' + step.id + ' by calling url with payload=' + value,
+      stepKey,
+      stepOptions,
+    );
+    return { ok: true };
+  } else return { ok: true };
 };
 
-const getNextStepFor = async (stepId: string, options: any | undefined) => {
-  const result = { isIntentComplete: false, nextStep: null };
-  const stepFn = await getStepFn(stepId);
-  const step = stepFn(options);
+const getNextStepFor = async (
+  step: ChatBotStep,
+  intent: ChatBotIntent,
+  options: any | undefined,
+) => {
+  const result = { isIntentComplete: false, nextStepId: null };
+
   if (step.nextStepId) {
-    const nextStepFn = await getStepFn(step.nextStepId);
-    const nextStep = nextStepFn(options);
-    return { ...result, nextStep };
+    return { ...result, nextStepId: step.nextStepId };
   }
   return { ...result, isIntentComplete: true };
 };
 
-const getStepTextAndOptionsByStepId = async (
-  stepId: string,
+const getStepTextAndOptionsByStep = async (
+  step: ChatBotStep,
+  intent: ChatBotIntent,
   options: any | undefined,
 ) => {
   const {
@@ -58,25 +72,36 @@ const getStepTextAndOptionsByStepId = async (
     },
   } = options;
 
-  const params = { name };
+  let stepOptions = [];
+  const stepRequiresUserInput = step.userResponseType !== 'no-response';
+  if (step.userResponseType === 'multiple-choice') {
+    stepOptions = step.options;
+  }
 
-  const stepFn = await getStepFn(stepId);
-  const step = stepFn(params);
-  const stepOptions = await getOptionsForStep(stepId, params);
-  return [step.text, stepOptions, step.key];
+  return [step.text, stepOptions, step.key, stepRequiresUserInput];
 };
 
 const handleIntentComplete = async (
+  intent: ChatBotIntent,
   userId: number,
   payload: any | undefined,
 ) => {
-  const result = { gotoStepId: null };
-  console.log(userId, 'completed intent with', payload);
-  return { ...result, gotoStepId: 'invitationCheck.1' };
+  const result = { responses: [], gotoStepId: null };
+  console.log(userId, 'completed intent ' + intent.title + ' with', payload);
+  if (intent.whenCompleteGotoStepId) {
+    result.gotoStepId = intent.whenCompleteGotoStepId;
+  }
+
+  // add intent responses
+  // TODO: send post req
+  if (intent.responses) {
+    result.responses = intent.responses;
+  }
+  return result;
 };
 
 export default {
-  getStepTextAndOptionsByStepId,
+  getStepTextAndOptionsByStep,
   getNextStepFor,
   handleIntentComplete,
   validate,
